@@ -3,515 +3,335 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hệ Thống Điều Hành Đa Dự Án</title>
+  <title>Giao Diện Tác Nghiệp Nhân Viên</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
   <style>
     :root {
-      --primary-color: #1a73e8;
-      --bg-color: #f0f4f9;
-      --card-bg: #ffffff;
-      --text-color: #333333;
-      --border-color: #dadce0;
+      --primary: #1a73e8;
+      --success: #34a853;
+      --warning: #fbbc05;
+      --bg: #f8f9fa;
+      --card: #ffffff;
+      --border: #e0e0e0;
     }
 
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: var(--bg-color);
-      color: var(--text-color);
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background-color: var(--bg);
       margin: 0;
-      padding: 0;
+      padding: 15px;
       display: flex;
       justify-content: center;
-      align-items: center;
-      min-height: 100vh;
     }
 
-    .container {
+    .app-container {
       width: 100%;
-      max-width: 600px;
-      padding: 20px;
+      max-width: 500px;
     }
 
     .card {
-      background: var(--card-bg);
+      background: var(--card);
       border-radius: 12px;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.08);
-      padding: 24px;
-      margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      padding: 16px;
+      margin-bottom: 15px;
+      border: 1px solid var(--border);
     }
 
-    .header-box {
-      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-      color: #ffffff;
-      text-align: center;
-      padding: 20px;
-      border-radius: 12px 12px 0 0;
-      margin: -24px -24px 24px -24px;
-    }
-
-    .header-box h2 {
-      margin: 0 0 8px 0;
-      font-size: 22px;
-    }
-
-    .header-box p {
-      margin: 0;
-      font-size: 13px;
-      opacity: 0.8;
-    }
-
-    .user-profile {
+    /* Khung thông tin cá nhân nhân viên */
+    .profile-header {
       display: flex;
       align-items: center;
-      gap: 15px;
-      background: #ffffff;
-      border: 1px solid var(--border-color);
+      gap: 12px;
     }
 
-    .user-avatar {
-      background: var(--primary-color);
+    .avatar-box {
+      background: var(--primary);
       color: white;
-      width: 45px;
-      height: 45px;
-      border-radius: 10px;
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
       display: flex;
       justify-content: center;
       align-items: center;
-      font-size: 20px;
+      font-size: 18px;
     }
 
-    .user-info h4 {
-      margin: 0;
-      color: var(--primary-color);
-    }
+    .profile-info h3 { margin: 0; font-size: 16px; color: #202124; }
+    .profile-info p { margin: 3px 0 0 0; font-size: 12px; color: #5f6368; }
 
-    .user-info p {
-      margin: 4px 0 0 0;
-      font-size: 13px;
-      color: #666;
-    }
-
-    .tabs {
-      display: flex;
-      border-bottom: 2px solid var(--border-color);
-      margin-bottom: 20px;
-      gap: 15px;
-    }
-
-    .tab-item {
-      padding: 10px 5px;
-      cursor: pointer;
-      font-weight: 600;
-      color: #666;
-      border-bottom: 3px solid transparent;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .tab-item.active {
-      color: var(--primary-color);
-      border-bottom-color: var(--primary-color);
-    }
-
-    .form-group {
-      margin-bottom: 18px;
-    }
-
-    .form-group label {
-      display: block;
-      font-weight: 600;
-      margin-bottom: 8px;
-      font-size: 14px;
-    }
-
-    select, input[type="text"] {
-      width: 100%;
-      padding: 12px;
-      border: 1px solid var(--border-color);
-      border-radius: 8px;
+    /* Danh sách công việc */
+    .job-title {
       font-size: 15px;
-      box-sizing: border-box;
-      outline: none;
-      transition: border-color 0.2s;
-    }
-
-    select:focus, input[type="text"]:focus {
-      border-color: var(--primary-color);
-    }
-
-    .btn-group-roles {
+      font-weight: 600;
+      color: #3c4043;
+      margin-bottom: 12px;
       display: flex;
-      gap: 10px;
-      margin-top: 5px;
-    }
-
-    .role-btn {
-      flex: 1;
-      padding: 10px;
-      border: 1px solid var(--border-color);
-      background: #fff;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: 500;
-      display: flex;
-      justify-content: center;
       align-items: center;
       gap: 6px;
     }
 
-    .role-btn.active {
-      background: #e8f0fe;
-      border-color: var(--primary-color);
-      color: var(--primary-color);
+    .job-item {
+      background: #fdfdfd;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 10px;
     }
 
-    button.btn-submit {
-      width: 100%;
-      padding: 14px;
-      background: var(--primary-color);
-      color: white;
+    .job-name {
+      font-weight: 600;
+      font-size: 14px;
+      color: #202124;
+      margin-bottom: 10px;
+    }
+
+    /* Nhóm nút tác vụ */
+    .action-group {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn-action {
+      flex: 1;
+      padding: 10px;
       border: none;
-      border-radius: 8px;
-      font-size: 16px;
+      border-radius: 6px;
+      font-size: 13px;
       font-weight: 600;
       cursor: pointer;
       display: flex;
       justify-content: center;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
+      transition: background 0.2s;
+    }
+
+    .btn-start { background-color: #e8f0fe; color: var(--primary); }
+    .btn-start:hover { background-color: #d2e3fc; }
+    
+    .btn-complete { background-color: #e6f4ea; color: var(--success); }
+    .btn-complete:hover { background-color: #ceead6; }
+
+    /* Lịch sử thời gian */
+    .history-box {
       margin-top: 10px;
+      padding-top: 8px;
+      border-top: 1px dashed var(--border);
     }
 
-    button.btn-submit:hover {
-      background: #1557b0;
+    .history-title {
+      font-size: 11px;
+      color: #70757a;
+      text-transform: uppercase;
+      font-weight: bold;
+      margin-bottom: 4px;
     }
 
-    button.btn-submit:disabled {
-      background: #ccc;
-      cursor: not-allowed;
+    .history-log {
+      font-size: 12px;
+      color: #3c4043;
+      margin: 3px 0;
+      display: flex;
+      justify-content: space-between;
     }
 
-    .view-section {
-      display: none;
-    }
-
-    .view-section.active {
-      display: block;
-    }
+    .badge-start { color: var(--primary); font-weight: 500; }
+    .badge-done { color: var(--success); font-weight: 500; }
+    
+    .loading-text { text-align: center; color: #888; font-size: 13px; padding: 20px 0; }
   </style>
 </head>
 <body>
 
-<div class="container">
+<div class="app-container">
 
-  <div id="view-login" class="card view-section active">
-    <div class="header-box">
-      <h2>HỆ THỐNG ĐIỀU HÀNH ĐA DỰ ÁN</h2>
-      <p>Phiên bản Web cao cấp - Tối ưu hóa vận hành & Khóa dữ liệu</p>
+  <div class="card profile-header">
+    <div class="avatar-box"><i class="fas fa-user"></i></div>
+    <div class="profile-info">
+      <h3 id="emp-name">Đang tải tên...</h3>
+      <p id="emp-meta">Mã số: ... | Dự án: ...</p>
     </div>
-
-    <div class="form-group">
-      <label><i class="fa-solid fa-map-location-dot"></i> BƯỚC 1: CHỌN DỰ ÁN LÀM VIỆC</label>
-      <select id="login-project">
-        <option value="">-- Đang kết nối cơ sở dữ liệu... --</option>
-      </select>
-    </div>
-
-    <div class="form-group">
-      <label><i class="fa-solid fa-user-shield"></i> BƯỚC 2: CHỌN VAI TRÒ TRUY CẬP</label>
-      <div class="btn-group-roles">
-        <button type="button" class="role-btn" onclick="selectRole('Nhân viên')"><i class="fa-solid fa-user"></i> Nhân viên</button>
-        <button type="button" class="role-btn active" onclick="selectRole('Giám sát')"><i class="fa-solid fa-user-tie"></i> Giám sát</button>
-        <button type="button" class="role-btn" onclick="selectRole('Cư dân')"><i class="fa-solid fa-house-user"></i> Cư dân</button>
-      </div>
-    </div>
-
-    <div class="form-group">
-      <label id="label-identity">Mã số nhân viên:</label>
-      <input type="text" id="login-identity" placeholder="Nhập mã nhân viên (Ví dụ: 111000, NV01)">
-    </div>
-
-    <button class="btn-submit" onclick="handleLogin()"><i class="fa-solid fa-right-to-bracket"></i> Xác thực thông tin truy cập</button>
   </div>
 
-
-  <div id="view-main" class="view-section">
+  <div class="card">
+    <div class="job-title">
+      <i class="fas fa-map-marker-alt" style="color: #ea4335;"></i>
+      <span>Khu vực phân công: <b id="text-current-area">Đang xác định...</b></span>
+    </div>
     
-    <div class="card user-profile">
-      <div class="user-avatar">
-        <i class="fa-solid fa-user-shield"></i>
-      </div>
-      <div class="user-info">
-        <p style="margin:0; font-size:11px; color:#aaa; text-transform:uppercase; font-weight:bold;" id="txt-role-display">GIÁM SÁT TRƯỞNG</p>
-        <h4 id="txt-username-display">LATHANHCU</h4>
-        <p id="txt-project-display"><i class="fa-solid fa-building"></i> Dự án vận hành: Mipec Rubik</p>
-      </div>
+    <div id="container-job-list">
+      <div class="loading-text"><i class="fas fa-spinner fa-spin"></i> Đang đọc danh sách đầu việc được giao...</div>
     </div>
-
-    <div class="tabs">
-      <div class="tab-item" id="tab-monitor" onclick="switchTab('monitor')"><i class="fa-solid fa-tower-broadcast"></i> Theo dõi trực tuyến</div>
-      <div class="tab-item active" id="tab-assign" onclick="switchTab('assign')"><i class="fa-solid fa-user-plus"></i> Giao phân công công việc</div>
-    </div>
-
-    <div id="content-monitor" class="card view-section">
-      <p style="text-align: center; color: #888;"><i class="fa-solid fa-spinner fa-spin"></i> Tính năng theo dõi dữ liệu trực tuyến đang được đồng bộ...</p>
-    </div>
-
-    <div id="content-assign" class="card view-section active">
-      <h3 style="margin-top:0; color: #333; font-size:16px; border-bottom:1px solid #eee; padding-bottom:10px;">
-        <i class="fa-solid fa-paste"></i> LẬP LỆNH PHÂN CÔNG ĐIỀU HÀNH
-      </h3>
-      
-      <div class="form-group">
-        <label>Chọn Khu vực chuẩn:</label>
-        <select id="assign-area">
-          <option value="">-- Đang tải dữ liệu khu vực... --</option>
-        </select>
-      </div>
-      
-      <div class="form-group">
-        <label>Nhân viên thực hiện:</label>
-        <input type="text" id="assign-staff" list="staff-suggestions" placeholder="Nhập tên hoặc mã để tra cứu...">
-        <datalist id="staff-suggestions"></datalist>
-      </div>
-      
-      <button class="btn-submit" id="btn-submit-assignment" onclick="submitAssignment()"><i class="fa-solid fa-paper-plane"></i> Phát lệnh ngay</button>
-    </div>
-
-    <button style="background:none; border:none; color:#888; cursor:pointer; text-decoration:underline; font-size:13px;" onclick="logout()"><i class="fa-solid fa-arrow-left"></i> Đăng xuất hệ thống</button>
   </div>
 
 </div>
 
 <script>
-  // ĐẢM BẢO ĐIỀN LINK WEB APP TẠI ĐÂY
-  const GAS_URL = "https://script.google.com/macros/s/AKfycbxzEcHa3MFSN-bWkOuUCjsnPY_wEcu3-vQJ-NW3CphptLUCBdfIa8iX_YzuoAz4mgOK/exec";
+  // CẤU HÌNH BIẾN TOÀN CỤC
+  const GAS_URL = "https://script.google.com/macros/s/AKfycbxuQcFZ1sh2_yz7sZbn0y8cD4dLjuZ8i8oa9VLLNdKgS9K-27qjsiGubQVlHmLVYOno/exec";
+  
+  // Giả lập thông tin nhân viên đăng nhập từ hệ thống (Ví dụ: Chị Liên đăng nhập vào dự án Mipec Rubik)
+  let SESSION = {
+    staffId: "111000",
+    staffName: "Chu Thị Bích Liên",
+    project: "Mipec Rubik"
+  };
 
-  let DB = { projects: [], nv: [], project_tree: {} };
-  let SESSION = { role: "Giám sát", identity: "", project: "", name: "" };
+  // Biến chứa toàn bộ cơ sở dữ liệu và lịch sử tạm thời trên bộ nhớ Web
+  let DB_PROJECT_TREE = {}; 
+  let WORK_HISTORY = []; 
 
-  // 1. TẢI CƠ SỞ DỮ LIỆU BAN ĐẦU (ANTI-CACHE)
-  function fetchMasterData() {
-    if (!GAS_URL || GAS_URL.includes("...")) {
-      alert("Vui lòng gắn liên kết Web App Apps Script (GAS_URL) chính xác!");
-      return;
-    }
-    
+  // 1. TỰ ĐỘNG CHẠY KHI TẢI TRANG
+  window.onload = function() {
+    setupEmployeeProfile();
+    loadWorkDataFromServer();
+  };
+
+  // Hiển thị thông tin nhân viên lên thanh đầu trang
+  function setupEmployeeProfile() {
+    document.getElementById("emp-name").innerText = SESSION.staffName.toUpperCase();
+    document.getElementById("emp-meta").innerText = `Mã số: ${SESSION.staffId} | Dự án: ${SESSION.project}`;
+  }
+
+  // 2. LẤY DỮ LIỆU CÔNG VIỆC & LỊCH SỬ TỪ GOOGLE SHEETS
+  function loadWorkDataFromServer() {
     const url = `${GAS_URL}?action=getInitData&_=${new Date().getTime()}`;
     
     fetch(url)
       .then(res => res.json())
       .then(res => {
         if (res.status === "success") {
-          DB = res.data;
-          buildProjectSelectOptions();
-        } else {
-          alert("Không thể đọc cấu trúc danh mục: " + res.message);
+          DB_PROJECT_TREE = res.data.project_tree || {};
+          
+          // Giả định nếu trong danh sách tổng có trả về lịch sử làm việc cũ từ tab phan_cong_data/lich_su_lam_viec
+          WORK_HISTORY = res.data.work_logs || []; 
+          
+          renderJobDashboard();
         }
       })
       .catch(err => {
-        console.error("Lỗi API: ", err);
+        console.error("Lỗi đồng bộ máy chủ: ", err);
+        document.getElementById("container-job-list").innerHTML = '<p class="loading-text" style="color:red;">Lỗi kết nối dữ liệu mạng!</p>';
       });
   }
 
-  // 2. NẠP DỰ ÁN VÀO MÀN HÌNH ĐĂNG NHẬP
-  function buildProjectSelectOptions() {
-    const select = document.getElementById("login-project");
-    if (!select) return;
+  // 3. TỰ ĐỘNG PHÂN TÍCH KHU VỰC VÀ HIỂN THỊ CHI TIẾT CÁC CÔNG VIỆC CỦA KHU VỰC ĐÓ
+  function renderJobDashboard() {
+    const listContainer = document.getElementById("container-job-list");
+    const areaTextElement = document.getElementById("text-current-area");
     
-    const projects = Object.keys(DB.project_tree || {});
-    if (projects.length === 0) {
-      select.innerHTML = '<option value="">-- Không có dữ liệu dự án --</option>';
+    const projectData = DB_PROJECT_TREE[SESSION.project];
+    
+    if (!projectData || Object.keys(projectData).length === 0) {
+      areaTextElement.innerText = "Chưa cấu hình";
+      listContainer.innerHTML = '<div class="loading-text">Dự án hiện tại chưa được lập danh mục công việc nào.</div>';
       return;
     }
+
+    // Lấy tên khu vực đầu tiên được phân công tìm thấy trong dữ liệu dự án của Sheets
+    const currentArea = Object.keys(projectData)[0]; 
+    areaTextElement.innerText = currentArea;
+
+    // Lấy danh sách các mảng công việc chi tiết nằm bên trong khu vực đó (Ví dụ: Quét dọn sảnh, lau sàn...)
+    const jobs = projectData[currentArea] || [];
     
-    select.innerHTML = "";
-    projects.forEach(p => {
-      select.innerHTML += `<option value="${p}">${p}</option>`;
+    if (jobs.length === 0) {
+      listContainer.innerHTML = '<div class="loading-text">Khu vực này không có đầu việc nào cần thực hiện.</div>';
+      return;
+    }
+
+    listContainer.innerHTML = ""; // Xóa dòng chữ Loading ẩn
+
+    // Duyệt qua từng công việc để vẽ giao diện kèm nút chức năng tương ứng
+    jobs.forEach((jobName, index) => {
+      // Lọc danh sách lịch sử nhấn nút của riêng công việc này để hiển thị ra màn hình
+      const jobLogs = WORK_HISTORY.filter(log => log.KhuVuc === currentArea && log.CongViec === jobName && log.MaNV === SESSION.staffId);
+      
+      let historyHtml = "";
+      if (jobLogs.length > 0) {
+        historyHtml = `<div class="history-box"><div class="history-title">Nhật ký thực hiện:</div>`;
+        jobLogs.forEach(log => {
+          const badgeClass = log.TrangThai === "Bắt đầu" ? "badge-start" : "badge-done";
+          historyHtml += `
+            <div class="history-log">
+              <span class="${badgeClass}"><i class="far fa-clock"></i> ${log.TrangThai}</span>
+              <span style="color:#70757a;">${log.ThoiGianNhan}</span>
+            </div>`;
+        });
+        historyHtml += `</div>`;
+      }
+
+      // Tạo chuỗi HTML cấu trúc thẻ công việc
+      const cardHtml = `
+        <div class="job-item" id="job-card-${index}">
+          <div class="job-name">${index + 1}. ${jobName}</div>
+          <div class="action-group">
+            <button class="btn-action btn-start" onclick="triggerWorkStatus('${currentArea}', '${jobName}', 'Bắt đầu', this)">
+              <i class="fas fa-play"></i> Bắt đầu
+            </button>
+            <button class="btn-action btn-complete" onclick="triggerWorkStatus('${currentArea}', '${jobName}', 'Hoàn thành', this)">
+              <i class="fas fa-check-double"></i> Hoàn thành
+            </button>
+          </div>
+          <div id="log-zone-${index}">${historyHtml}</div>
+        </div>
+      `;
+      listContainer.innerHTML += cardHtml;
     });
   }
 
-  function selectRole(role) {
-    SESSION.role = role;
-    document.querySelectorAll('.role-btn').forEach(btn => btn.classList.remove('active'));
-    event.currentTarget.classList.add('active');
-    
-    const label = document.getElementById("label-identity");
-    const input = document.getElementById("login-identity");
-    if (role === "Cư dân") {
-      label.innerText = "Số phòng khách hàng:";
-      input.placeholder = "Nhập số căn hộ/phòng";
-    } else {
-      label.innerText = "Mã số nhân viên:";
-      input.placeholder = "Nhập mã nhân viên (Ví dụ: 111000)";
-    }
-  }
+  // 4. XỬ LÝ SỰ KIỆN GỬI THỜI GIAN THỰC LÊN GOOGLE SHEETS KHI NHÂN VIÊN NHẤN NÚT
+  function triggerWorkStatus(area, jobName, status, buttonElement) {
+    // Tạm khóa nút vừa nhấn để tránh việc người dùng bấm liên tục nhiều lần bị trùng lệnh
+    const originalText = buttonElement.innerHTML;
+    buttonElement.disabled = true;
+    buttonElement.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Đang ghi...`;
 
-  // 3. LOGIC ĐĂNG NHẬP
-  function handleLogin() {
-    const selectedProj = document.getElementById("login-project").value;
-    const identityVal = document.getElementById("login-identity").value.trim();
-    
-    if (!selectedProj) {
-      alert("Vui lòng chọn một Dự án để làm việc!");
-      return;
-    }
-    if (!identityVal) {
-      alert("Vui lòng nhập Mã xác thực truy cập!");
-      return;
-    }
-    
-    SESSION.project = selectedProj;
-    SESSION.identity = identityVal;
-    SESSION.name = identityVal;
-
-    if (DB.nv && Array.isArray(DB.nv)) {
-      const matchStaff = DB.nv.find(emp => emp.DuAn === selectedProj && emp.MaNV.toString() === identityVal);
-      if (matchStaff) SESSION.name = matchStaff.HoTen;
-    }
-
-    document.getElementById("txt-role-display").innerText = SESSION.role + " trường";
-    document.getElementById("txt-username-display").innerText = SESSION.name.toUpperCase();
-    document.getElementById("txt-project-display").innerHTML = `<i class="fa-solid fa-building"></i> Dự án vận hành: <b>${SESSION.project}</b>`;
-    
-    refreshPanelViews();
-    
-    document.getElementById("view-login").classList.remove("active");
-    document.getElementById("view-main").classList.add("active");
-  }
-
-  // 4. ĐỒNG BỘ KHU VỰC VÀ TẠO BỘ TÌM KIẾM GỢI Ý NHÂN VIÊN CHUẨN XÁC
-  function refreshPanelViews() {
-    const currentProject = SESSION.project;
-    if (!currentProject) return;
-
-    // A. Nạp danh sách khu vực động theo dự án
-    const areaSelect = document.getElementById("assign-area");
-    if (areaSelect) {
-      areaSelect.innerHTML = '<option value="">-- Chọn khu vực --</option>';
-      if (DB.project_tree && DB.project_tree[currentProject]) {
-        const areas = Object.keys(DB.project_tree[currentProject]);
-        areas.forEach(area => {
-          if (area) areaSelect.innerHTML += `<option value="${area}">${area}</option>`;
-        });
-      }
-    }
-
-    // B. Tạo danh sách gợi ý nhân viên tự động (Auto-complete)
-    const staffDatalist = document.getElementById("staff-suggestions");
-    const staffInput = document.getElementById("assign-staff");
-    
-    if (staffDatalist) {
-      staffDatalist.innerHTML = "";
-      if (staffInput) staffInput.value = "";
-      
-      if (DB.nv && Array.isArray(DB.nv)) {
-        // Lọc nhân viên có mã số thuộc riêng dự án đã chọn
-        const filteredStaffs = DB.nv.filter(emp => emp.DuAn === currentProject && emp.MaNV);
-        filteredStaffs.forEach(staff => {
-          // Định dạng: "Mã Số - Họ Tên" để tìm kiếm linh hoạt theo cả 2 trường thông tin
-          const suggestionValue = `${staff.MaNV} - ${staff.HoTen}`;
-          staffDatalist.innerHTML += `<option value="${suggestionValue}"></option>`;
-        });
-      }
-    }
-  }
-
-  // 5. KÍCH HOẠT NÚT PHÁT LỆNH - GỬI DỮ LIỆU ĐẾN GOOGLE SHEET KHÔNG LỖI CACHE
-  function submitAssignment() {
-    const area = document.getElementById("assign-area").value;
-    const staffText = document.getElementById("assign-staff").value.trim();
-    const btnSubmit = document.getElementById("btn-submit-assignment");
-    
-    if (!area) {
-      alert("Vui lòng chọn Khu vực chuẩn trước khi phát lệnh!");
-      return;
-    }
-    if (!staffText) {
-      alert("Vui lòng nhập hoặc chọn Nhân viên thực hiện lệnh!");
-      return;
-    }
-
-    let staffId = "";
-    let staffName = staffText;
-
-    // Nếu người dùng chọn từ danh sách gợi ý dạng "111000 - Chu Thị Bích Liên"
-    if (staffText.includes(" - ")) {
-      const parts = staffText.split(" - ");
-      staffId = parts[0].trim();
-      staffName = parts[1].trim();
-    } else {
-      // Trường hợp gõ tay tự do, kiểm tra xem có khớp với mã hoặc tên nào không
-      const matched = DB.nv.find(emp => 
-        emp.DuAn === SESSION.project && 
-        (emp.MaNV.toString() === staffText || emp.HoTen.toLowerCase() === staffText.toLowerCase())
-      );
-      if (matched) {
-        staffId = matched.MaNV;
-        staffName = matched.HoTen;
-      } else {
-        alert("Nhân viên không tồn tại trong dự án hiện tại. Vui lòng chọn lại danh sách gợi ý!");
-        return;
-      }
-    }
-
-    // Khóa nút để tránh spam đúp dữ liệu
-    btnSubmit.disabled = true;
-    btnSubmit.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Đang ghi nhận phân công...`;
-
-    // Khởi tạo FormData đẩy gói dữ liệu POST sang API `doPost` của Apps Script
-    const formData = new URLSearchParams();
-    formData.append("action", "addStaff");
-    formData.append("project", SESSION.project);
-    formData.append("staffId", staffId);
-    formData.append("staffName", staffName);
+    // Tạo gói dữ liệu chuẩn gửi đi
+    const params = new URLSearchParams();
+    params.append("action", "logWorkTime");
+    params.append("project", SESSION.project);
+    params.append("area", area);
+    params.append("job", jobName);
+    params.append("staffId", SESSION.staffId);
+    params.append("staffName", SESSION.staffName);
+    params.append("status", status);
 
     fetch(GAS_URL, {
       method: "POST",
-      body: formData,
+      body: params,
       headers: { "Content-Type": "application/x-www-form-urlencoded" }
     })
     .then(res => res.json())
     .then(res => {
       if (res.status === "success") {
-        alert(`🎉 Phát lệnh thành công!\nĐã cập nhật nhân sự phụ trách vào Google Sheets.`);
-        document.getElementById("assign-staff").value = "";
-        // Làm mới dữ liệu ngầm từ máy chủ
-        fetchMasterData();
+        // Nối mốc thời gian phản hồi thực tế từ Google Sheet vào danh sách lịch sử cục bộ
+        WORK_HISTORY.push({
+          KhuVuc: area,
+          CongViec: jobName,
+          MaNV: SESSION.staffId,
+          TrangThai: status,
+          ThoiGianNhan: res.time
+        });
+        
+        // Vẽ lại danh sách để cập nhật bảng nhật ký thời gian ngay tức thì dưới chân thẻ việc
+        renderJobDashboard();
       } else {
-        alert("Lỗi ghi nhận từ máy chủ: " + res.message);
+        alert("Có lỗi xảy ra từ máy chủ: " + res.message);
       }
     })
     .catch(err => {
-      console.error("Lỗi kết nối mạng: ", err);
-      alert("Không thể gửi yêu cầu phân công, vui lòng kiểm tra kết nối mạng!");
+      console.error("Lỗi mạng: ", err);
+      alert("Mạng không ổn định, không thể ghi nhận mốc thời gian thực!");
     })
     .finally(() => {
-      btnSubmit.disabled = false;
-      btnSubmit.innerHTML = `<i class="fa-solid fa-paper-plane"></i> Phát lệnh ngay`;
+      // Mở khóa lại nút bấm sau khi thao tác thành công
+      buttonElement.disabled = false;
+      buttonElement.innerHTML = originalText;
     });
   }
-
-  function switchTab(tabName) {
-    document.querySelectorAll('.tab-item').forEach(tab => tab.classList.remove('active'));
-    document.getElementById('content-monitor').classList.remove('active');
-    document.getElementById('content-assign').classList.remove('active');
-    
-    document.getElementById(`tab-${tabName}`).classList.add('active');
-    document.getElementById(`content-${tabName}`).classList.add('active');
-  }
-
-  function logout() {
-    document.getElementById("view-main").classList.remove("active");
-    document.getElementById("view-login").classList.add("active");
-    document.getElementById("login-identity").value = "";
-  }
-
-  window.onload = function() {
-    fetchMasterData();
-  };
 </script>
 
 </body>
