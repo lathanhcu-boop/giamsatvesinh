@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HỆ THỐNG ĐIỀU HÀNH & GIÁM SÁT ĐA DỰ ÁN</title>
+    <!-- Tailwind CSS & Google Fonts -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        .tab-active { border-color: #3b82f6; color: #3b82f6; font-weight: 600; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body class="text-slate-800 antialiased">
+
+    <!-- TOP TELEMETRY BAR -->
+    <div class="bg-slate-900 text-white text-xs px-4 py-2 flex justify-between items-center shadow-inner">
+        <div class="flex items-center gap-3">
+            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-500/20 text-emerald-400">
+                <span class="w-1.5 h-1.5 mr-1.5 bg-emerald-400 rounded-full animate-pulse"></span> Trực tuyến
+            </span>
+            <span id="current-time-display" class="opacity-70"></span>
+        </div>
+        <div class="text-slate-400 font-medium">Hệ thống Đồng bộ Google Sheets Real-time</div>
+    </div>
+
+    <!-- MAIN APP WRAPPER -->
+    <div id="app" class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+        
+        <!-- SETUP CONFIGURATION NOTIFICATION -->
+        <div id="setup-banner" class="mb-6 bg-amber-50 border border-amber-200 text-amber-800 p-4 rounded-xl flex flex-col sm:flex-row gap-3 justify-between items-start sm:items-center shadow-xs">
+            <div class="flex gap-3 items-center">
+                <div class="p-2 bg-amber-200 rounded-lg text-amber-900"><i class="fa-solid class fa-gears text-lg"></i></div>
+                <div>
+                    <h4 class="font-semibold text-sm">Cấu hình kết nối Google Apps Script API</h4>
+                    <p class="text-xs opacity-90 mt-0.5">Vui lòng điền URL triển khai Web App của bạn để kích hoạt đồng bộ dữ liệu.</p>
+                </div>
+            </div>
+            <div class="w-full sm:w-auto flex gap-2">
+                <input type="text" id="gas-url-input" placeholder="https://script.google.com/macros/s/.../exec" class="bg-white border border-amber-300 rounded-lg px-3 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500 grow max-w-md">
+                <button onclick="saveGasUrl()" class="bg-slate-900 hover:bg-slate-800 text-white font-medium px-4 py-1.5 rounded-lg text-xs transition-colors shadow-xs shrink-0">Kết nối</button>
+            </div>
+        </div>
+
+        <!-- AUTHENTICATION SCREEN -->
+        <div id="auth-screen" class="max-w-xl mx-auto mt-8 bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
+            <div class="bg-slate-900 p-6 text-center text-white">
+                <div class="inline-flex p-3 bg-white/10 rounded-2xl mb-3"><i class="fa-solid fa-building-shield text-2xl text-blue-400"></i></div>
+                <h2 class="text-xl font-bold tracking-tight">HỆ THỐNG ĐIỀU HÀNH ĐA DỰ ÁN</h2>
+                <p class="text-xs text-slate-400 mt-1">Phiên bản Web cao cấp - Tối ưu hóa vận hành & Khóa dữ liệu</p>
+            </div>
+            
+            <div class="p-6 space-y-6">
+                <!-- PROJECT SELECT -->
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2"><i class="fa-solid fa-map-location-dot mr-1"></i> Bước 1: Chọn dự án làm việc</label>
+                    <select id="login-project" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all font-medium">
+                        <option value="Mipec Rubik">Mipec Rubik Xuân Thủy</option>
+                        <option value="Mipec Tây Sơn">Mipec Tây Sơn</option>
+                        <option value="Dự án Ngoại Giao Đoàn">Dự án Ngoại Giao Đoàn</option>
+                    </select>
+                </div>
+
+                <!-- ROLE CARDS SELECT -->
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2"><i class="fa-solid fa-users-gear mr-1"></i> Bước 2: Chọn vai trò truy cập</label>
+                    <div class="grid grid-cols-3 gap-3">
+                        <label class="cursor-pointer group">
+                            <input type="radio" name="role-select" value="staff" checked onchange="toggleAuthFields()" class="peer sr-only">
+                            <div class="p-3 border border-slate-200 bg-slate-50 rounded-xl text-center transition-all group-hover:bg-slate-100 peer-checked:border-blue-500 peer-checked:bg-blue-50/50 peer-checked:text-blue-600">
+                                <i class="fa-solid fa-id-card-clip text-lg mb-1 block"></i>
+                                <span class="text-xs font-medium">Nhân viên</span>
+                            </div>
+                        </label>
+                        <label class="cursor-pointer group">
+                            <input type="radio" name="role-select" value="admin" onchange="toggleAuthFields()" class="peer sr-only">
+                            <div class="p-3 border border-slate-200 bg-slate-50 rounded-xl text-center transition-all group-hover:bg-slate-100 peer-checked:border-blue-500 peer-checked:bg-blue-50/50 peer-checked:text-blue-600">
+                                <i class="fa-solid fa-user-shield text-lg mb-1 block"></i>
+                                <span class="text-xs font-medium">Giám sát</span>
+                            </div>
+                        </label>
+                        <label class="cursor-pointer group">
+                            <input type="radio" name="role-select" value="customer" onchange="toggleAuthFields()" class="peer sr-only">
+                            <div class="p-3 border border-slate-200 bg-slate-50 rounded-xl text-center transition-all group-hover:bg-slate-100 peer-checked:border-blue-500 peer-checked:bg-blue-50/50 peer-checked:text-blue-600">
+                                <i class="fa-solid fa-house-user text-lg mb-1 block"></i>
+                                <span class="text-xs font-medium">Cư dân</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="h-px bg-slate-100"></div>
+
+                <!-- DYNAMIC FIELD CONTROLLER -->
+                <div id="field-container">
+                    <!-- Staff Creds -->
+                    <div id="field-staff" class="space-y-1">
+                        <label class="block text-xs font-medium text-slate-600 mb-1">Mã số nhân viên</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400 text-sm"><i class="fa-solid fa-font-awesome"></i></span>
+                            <input type="text" id="input-ma-nv" placeholder="Nhập mã nhân viên (Ví dụ: 1101, NV01)" class="w-full border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                    </div>
+                    <!-- Admin Creds -->
+                    <div id="field-admin" class="space-y-1 hidden">
+                        <label class="block text-xs font-medium text-slate-600 mb-1">Email Giám sát hệ thống</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400 text-sm"><i class="fa-solid fa-envelope"></i></span>
+                            <input type="email" id="input-email-admin" placeholder="admin@gmail.com hoặc email quản lý" class="w-full border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                    </div>
+                    <!-- Customer Creds -->
+                    <div id="field-customer" class="space-y-1 hidden">
+                        <label class="block text-xs font-medium text-slate-600 mb-1">Số phòng / Mã căn hộ cư dân</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400 text-sm"><i class="fa-solid fa-door-closed"></i></span>
+                            <input type="text" id="input-room-customer" placeholder="Nhập chính xác số phòng (Ví dụ: 102-A, P2005)" class="w-full border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SUBMIT ACTION BUTTON -->
+                <button onclick="handleLogin()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-xl shadow-md shadow-blue-500/10 transition-all flex justify-center items-center gap-2 text-sm">
+                    <i class="fa-solid fa-right-to-bracket"></i> Xác thực thông tin truy cập
+                </button>
+            </div>
+        </div>
+
+        <!-- PRINCIPAL APPLICATION CONTAINER -->
+        <div id="main-panel" class="hidden space-y-6">
+            
+            <!-- APPLICATION CONTROL HEADER -->
+            <div class="bg-white rounded-2xl p-4 sm:p-6 border border-slate-100 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div class="flex items-center gap-4">
+                    <div class="p-3.5 bg-blue-600 text-white rounded-xl shadow-md shadow-blue-500/20"><i id="panel-avatar" class="fa-solid text-xl"></i></div>
+                    <div>
+                        <div class="text-xs font-bold text-blue-600 uppercase tracking-wider" id="panel-role-badge">Vai trò</div>
+                        <h2 class="text-xl font-bold mt-0.5 text-slate-900" id="panel-username-display">Họ Tên Tài Khoản</h2>
+                        <p class="text-xs text-slate-500 mt-0.5"><i class="fa-solid fa-city mr-1"></i> Dự án vận hành: <span class="font-semibold text-slate-700" id="panel-project-display">Tên dự án</span></p>
+                    </div>
+                </div>
+                <button onclick="handleLogout()" class="w-full md:w-auto bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold px-5 py-2.5 rounded-xl text-xs transition-colors flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-right-from-bracket"></i> Thoát / Đổi tài khoản hoặc Dự án
+                </button>
+            </div>
+
+            <!-- ========================= CƯ DÂN CONTAINER ========================= -->
+            <div id="panel-customer" class="hidden space-y-6">
+                <!-- TABS BAR -->
+                <div class="border-b border-slate-200 flex gap-6 overflow-x-auto hide-scrollbar">
+                    <button onclick="switchTab('cust', 'request')" id="tab-cust-request" class="py-3 border-b-2 border-transparent text-sm font-medium text-slate-500 hover:text-slate-800 transition-all whitespace-nowrap tab-active"><i class="fa-solid fa-pen-to-square mr-1.5"></i>Gửi yêu cầu phát sinh</button>
+                    <button onclick="switchTab('cust', 'history')" id="tab-cust-history" class="py-3 border-b-2 border-transparent text-sm font-medium text-slate-500 hover:text-slate-800 transition-all whitespace-nowrap"><i class="fa-solid fa-list-check mr-1.5"></i>Theo dõi tiến độ & Nhật ký</button>
+                </div>
+                
+                <!-- TAB CONTENT: REQUEST FORM -->
+                <div id="content-cust-request" class="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm space-y-4">
+                    <h3 class="text-sm font-bold uppercase tracking-wider text-slate-400 mb-2"><i class="fa-solid fa-bell-concierge mr-1.5 text-blue-500"></i>Tạo phiếu phản ánh / Sự cố khẩn cấp</h3>
+                    <div class="space-y-1">
+                        <label class="block text-xs font-semibold text-slate-600">Nội dung chi tiết yêu cầu ban quản lý xử lý:</label>
+                        <textarea id="cust-issue-content" rows="4" placeholder="Ví dụ: Sảnh tầng ẩm ướt cần lau dọn, rác hành lang chưa dọn, vỡ kính ban công..." class="w-full border border-slate-200 rounded-xl p-4 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                    </div>
+                    <button onclick="submitCustomerRequest()" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-xl text-xs transition-all shadow-md shadow-blue-500/10 flex items-center gap-2">
+                        <i class="fa-solid fa-paper-plane"></i> Gửi phiếu phản ánh ngay
+                    </button>
+                </div>
+
+                <!-- TAB CONTENT: TRACKING STATUS -->
+                <div id="content-cust-history" class="hidden space-y-6">
+                    <div class="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm">
+                        <h3 class="text-sm font-bold uppercase tracking-wider text-slate-400 mb-4"><i class="fa-solid fa-triangle-exclamation text-amber-500 mr-1.5"></i>Tiến độ xử lý các sự cố căn hộ phát sinh</h3>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-xs border-collapse">
+                                <thead>
+                                    <tr class="border-b border-slate-200 bg-slate-50 text-slate-500 font-semibold uppercase tracking-wider">
+                                        <th class="p-3 rounded-l-lg">Ngày gửi</th>
+                                        <th class="p-3">Nội dung yêu cầu</th>
+                                        <th class="p-3">Ban quản lý tiếp nhận</th>
+                                        <th class="p-3">Trạng thái nhân viên</th>
+                                        <th class="p-3 rounded-r-lg">Giám sát nghiệm thu</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="table-customer-issues-rows" class="divide-y divide-slate-100 text-slate-600">
+                                    <!-- Dynamic rows via script -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm">
+                        <h3 class="text-sm font-bold uppercase tracking-wider text-slate-400 mb-4"><i class="fa-solid fa-clipboard-check text-emerald-500 mr-1.5"></i>Nhật ký vệ sinh & Bảo trì định kỳ sảnh căn hộ</h3>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-xs border-collapse">
+                                <thead>
+                                    <tr class="border-b border-slate-200 bg-slate-50 text-slate-500 font-semibold uppercase tracking-wider">
+                                        <th class="p-3 rounded-l-lg">Ngày thực hiện</th>
+                                        <th class="p-3">Hạng mục công việc định kỳ</th>
+                                        <th class="p-3">Thời gian bắt đầu</th>
+                                        <th class="p-3">Thời gian hoàn thành</th>
+                                        <th class="p-3 rounded-r-lg">Trạng thái</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="table-customer-regular-rows" class="divide-y divide-slate-100 text-slate-600">
+                                    <!-- Dynamic rows -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========================= GIÁM SÁT CONTAINER ========================= -->
+            <div id="panel-admin" class="hidden space-y-6">
+                <!-- TABS BAR -->
+                <div class="border-b border-slate-200 flex gap-6 overflow-x-auto hide-scrollbar">
+                    <button onclick="switchTab('admin', 'monitor')" id="tab-admin-monitor" class="py-3 border-b-2 border-transparent text-sm font-medium text-slate-500 hover:text-slate-800 transition-all whitespace-nowrap tab-active"><i class="fa-solid fa-tower-broadcast mr-1.5"></i>Theo dõi trực tuyến</button>
+                    <button onclick="switchTab('admin', 'issues')" id="tab-admin-issues" class="py-3 border-b-2 border-transparent text-sm font-medium text-slate-500 hover:text-slate-800 transition-all whitespace-nowrap"><i class="fa-solid fa-circle-exclamation mr-1.5"></i>Yêu cầu của khách</button>
+                    <button onclick="switchTab('admin', 'assign')" id="tab-admin-assign" class="py-3 border-b-2 border-transparent text-sm font-medium text-slate-500 hover:text-slate-800 transition-all whitespace-nowrap"><i class="fa-solid fa-user-plus mr-1.5"></i>Giao phân công việc</button>
+                    <button onclick="switchTab('admin', 'qc')" id="tab-admin-qc" class="py-3 border-b-2 border-transparent text-sm font-medium text-slate-500 hover:text-slate-800 transition-all whitespace-nowrap"><i class="fa-solid fa-award mr-1.5"></i>Nghiệm thu chất lượng (QC)</button>
+                </div>
+
+                <!-- TAB CONTENT: LIVE TRACKING MONITOR -->
+                <div id="content-admin-monitor" class="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm space-y-4">
+                    <h3 class="text-sm font-bold uppercase tracking-wider text-slate-400"><i class="fa-solid fa-wifi text-blue-500 mr-1.5"></i>Bảng định vị hoạt động nhân sự thời gian thực trong ngày</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs border-collapse">
+                            <thead>
+                                <tr class="border-b border-slate-200 bg-slate-50 text-slate-500 font-semibold uppercase tracking-wider">
+                                    <th class="p-3">Nhân viên</th>
+                                    <th class="p-3">Khu vực đang dọn</th>
+                                    <th class="p-3">Nội dung công việc</th>
+                                    <th class="p-3">Thời điểm bắt đầu</th>
+                                    <th class="p-3">Trạng thái hiện tại</th>
+                                </tr>
+                            </thead>
+                            <tbody id="table-admin-monitor-rows" class="divide-y divide-slate-100 text-slate-600">
+                                <!-- Dynamic rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- TAB CONTENT: CUSTOMER INCOMING REQUESTS -->
+                <div id="content-admin-issues" class="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm space-y-4">
+                    <h3 class="text-sm font-bold uppercase tracking-wider text-slate-400"><i class="fa-solid fa-comments text-amber-500 mr-1.5"></i>Danh sách sự cố cư dân phản ánh chờ ban quản lý điều phối</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs border-collapse">
+                            <thead>
+                                <tr class="border-b border-slate-200 bg-slate-50 text-slate-500 font-semibold uppercase tracking-wider">
+                                    <th class="p-3">Ngày phản ánh</th>
+                                    <th class="p-3">Căn hộ/Phòng</th>
+                                    <th class="p-3">Nội dung phản ánh sự cố</th>
+                                    <th class="p-3">Tình trạng tiếp nhận</th>
+                                </tr>
+                            </thead>
+                            <tbody id="table-admin-issues-rows" class="divide-y divide-slate-100 text-slate-600">
+                                <!-- Dynamic rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- TAB CONTENT: ASSIGN TASKS MANAGEMENT -->
+                <div id="content-admin-assign" class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    <div class="lg:col-span-5 bg-white rounded-2xl p-6 border border-slate-100 shadow-sm space-y-4 h-fit">
+                        <h3 class="text-sm font-bold uppercase tracking-wider text-slate-400"><i class="fa-solid fa-paste text-indigo-500 mr-1.5"></i>Lập lệnh phát phân công điều hành</h3>
+                        
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Tính chất công việc:</label>
+                            <div class="grid grid-cols-2 gap-2 bg-slate-100 p-1 rounded-xl">
+                                <label class="cursor-pointer text-center">
+                                    <input type="radio" name="assign-source" value="standard" checked onchange="toggleAssignSourceFields()" class="peer sr-only">
+                                    <div class="py-1.5 text-xs font-medium rounded-lg peer-checked:bg-white peer-checked:text-blue-600 peer-checked:shadow-xs text-slate-600">Danh mục chuẩn</div>
+                                </label>
+                                <label class="cursor-pointer text-center">
+                                    <input type="radio" name="assign-source" value="issue" onchange="toggleAssignSourceFields()" class="peer sr-only">
+                                    <div class="py-1.5 text-xs font-medium rounded-lg peer-checked:bg-white peer-checked:text-blue-600 peer-checked:shadow-xs text-slate-600">Xử lý sự cố cư dân</div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Dynamic Assign Selectors -->
+                        <div id="assign-field-standard">
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Chọn Khu vực chuẩn:</label>
+                            <select id="assign-area-select" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"></select>
+                        </div>
+                        <div id="assign-field-issue" class="hidden">
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Chọn Phiếu sự cố đang chờ:</label>
+                            <select id="assign-issue-select" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"></select>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Chọn Nhân viên thực hiện (Có thể chọn nhiều):</label>
+                            <div id="assign-staff-checkboxes" class="border border-slate-200 rounded-xl p-3 max-h-40 overflow-y-auto space-y-2 text-xs bg-slate-50">
+                                <!-- Checkboxes -->
+                            </div>
+                        </div>
+
+                        <button onclick="dispatchAssignment()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-4 rounded-xl text-xs shadow-md shadow-blue-500/10 flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-bullhorn"></i> Phát lệnh Phân công ngay
+                        </button>
+                    </div>
+
+                    <div class="lg:col-span-7 bg-white rounded-2xl p-6 border border-slate-100 shadow-sm space-y-4">
+                        <h3 class="text-sm font-bold uppercase tracking-wider text-slate-400"><i class="fa-solid fa-calendar-day text-slate-500 mr-1.5"></i>Bảng điều phối công việc trong ngày hôm nay</h3>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-xs border-collapse">
+                                <thead>
+                                    <tr class="border-b border-slate-200 bg-slate-50 text-slate-500 font-semibold uppercase tracking-wider">
+                                        <th class="p-3 rounded-l-lg">Nhân viên</th>
+                                        <th class="p-3 rounded-r-lg">Khu vực / Nội dung được giao</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="table-admin-dispatch-rows" class="divide-y divide-slate-100 text-slate-600">
+                                    <!-- Dynamic Rows -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB CONTENT: QUALITY CONTROL APPROVAL -->
+                <div id="content-admin-qc" class="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm space-y-6">
+                    <div>
+                        <h3 class="text-sm font-bold uppercase tracking-wider text-slate-400 mb-3"><i class="fa-solid fa-hourglass-half text-amber-500 mr-1.5"></i>Hạng mục đã hoàn thành - Chờ Giám sát chốt Đạt QC</h3>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-xs border-collapse">
+                                <thead>
+                                    <tr class="border-b border-slate-200 bg-slate-50 text-slate-500 font-semibold uppercase tracking-wider">
+                                        <th class="p-3 w-12 text-center rounded-l-lg">Duyệt</th>
+                                        <th class="p-3">Khu vực</th>
+                                        <th class="p-3">Công việc</th>
+                                        <th class="p-3">Nhân viên thực hiện</th>
+                                        <th class="p-3">Thời gian</th>
+                                        <th class="p-3 rounded-r-lg">Tình trạng</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="table-admin-qc-pending-rows" class="divide-y divide-slate-100 text-slate-600">
+                                    <!-- Dynamic rows -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="mt-4 flex justify-end">
+                            <button onclick="commitQCOutcomes()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-6 py-2.5 rounded-xl text-xs shadow-md transition-all flex items-center gap-2">
+                                <i class="fa-solid fa-lock-open"></i> Khóa dữ liệu và Phê duyệt Nghiệm thu
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="h-px bg-slate-100"></div>
+
+                    <div>
+                        <h3 class="text-sm font-bold uppercase tracking-wider text-slate-400 mb-3"><i class="fa-solid fa-circle-check text-emerald-500 mr-1.5"></i>Lịch sử danh sách công việc đã khóa Đạt QC hôm nay</h3>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-xs border-collapse">
+                                <thead>
+                                    <tr class="border-b border-slate-200 bg-slate-50 text-slate-500 font-semibold uppercase tracking-wider">
+                                        <th class="p-3 rounded-l-lg">Khu vực</th>
+                                        <th class="p-3">Công việc</th>
+                                        <th class="p-3">Nhân viên</th>
+                                        <th class="p-3">Bắt đầu - Kết thúc</th>
+                                        <th class="p-3 rounded-r-lg">Thời điểm Khóa Đạt QC</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="table-admin-qc-passed-rows" class="divide-y divide-slate-100 text-slate-600">
+                                    <!-- Dynamic rows -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========================= NHÂN VIÊN CONTAINER ========================= -->
+            <div id="panel-staff" class="hidden space-y-6">
+                <!-- EMERGENCY JOBS PANEL -->
+                <div id="staff-emergency-box" class="hidden bg-rose-50 border border-rose-200 rounded-2xl p-5 space-y-4 shadow-sm">
+                    <h3 class="text-sm font-bold text-rose-800 flex items-center gap-2 animate-pulse"><i class="fa-solid fa-triangle-exclamation text-lg"></i> LỆNH PHÁT SINH SỰ CỐ CƯ DÂN KHẨN CẤP ĐƯỢC GIAO:</h3>
+                    <div id="staff-emergency-list" class="space-y-3">
+                        <!-- Dynamic items -->
+                    </div>
+                </div>
+
+                <!-- REGULAR HIERARCHY WORK -->
+                <div class="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm space-y-4">
+                    <h3 class="text-sm font-bold uppercase tracking-wider text-slate-400"><i class="fa-solid fa-map-pin text-blue-500 mr-1.5"></i>Định vị Khu vực & Vị trí làm việc</h3>
+                    <div class="max-w-md">
+                        <label class="block text-xs font-medium text-slate-600 mb-1">Chọn Khu vực bạn đang đứng thao tác dọn dẹp:</label>
+                        <select id="staff-area-select" onchange="renderStaffRegularJobs()" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-3 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium text-slate-700"></select>
+                    </div>
+                    
+                    <div class="h-px bg-slate-100 my-4"></div>
+                    
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Danh sách hạng mục công việc định kỳ quy chuẩn:</h4>
+                    <div id="staff-regular-jobs-list" class="space-y-3">
+                        <!-- Dynamic job rows with punch clock buttons -->
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- MAIN CONTROL JAVASCRIPT BLOCK -->
+    <script>
+        // CORE GLOBAL VARIABLES
+        let GAS_URL = localStorage.getItem("gas_url") || "";
+        let SESSION = { user: null, role: null, project: null };
+        let DB = { nv: [], project_tree: {}, valid_supervisors: {}, valid_customers: [], history: [], assign: [], issues: [] };
+
+        // INITIAL ONLOAD TRIGGERS
+        window.onload = function() {
+            if (GAS_URL) {
+                document.getElementById("gas-url-input").value = GAS_URL;
+                document.getElementById("setup-banner").classList.add("hidden");
+                fetchMasterData();
+            }
+            setInterval(updateTimeDisplay, 1000);
+            updateTimeDisplay();
+        };
+
+        function updateTimeDisplay() {
+            const options = { timeZone: "Asia/Ho_Chi_Minh", hour: '2-digit', minute: '2-digit', second: '2-digit', year: 'numeric', month: '2-digit', day: '2-digit' };
+            const formatter = new Intl.DateTimeFormat('vi-VN', options);
+            document.getElementById("current-time-display").innerText = "Múi giờ VN (UTC+7): " + formatter.format(new Date());
+        }
+
+        function saveGasUrl() {
+            const url = document.getElementById("gas-url-input").value.trim();
+            if (!url) return alert("Vui lòng nhập URL Web App hợp lệ!");
+            localStorage.setItem("gas_url", url);
+            GAS_URL = url;
+            document.getElementById("setup-banner").classList.add("hidden");
+            fetchMasterData();
+        }
+
+        // FETCH DATA PACKET FROM GOOGLE APPS SCRIPT WEB APP
+        async function fetchMasterData() {
+            if (!GAS_URL) return;
+            try {
+                const response = await fetch(`${GAS_URL}?action=getInitData`);
+                const result = await response.json();
+                if (result.status === "success") {
+                    DB.nv = result.data.nv || [];
+                    DB.project_tree = result.data.project_tree || {};
+                    DB.valid_supervisors = result.data.valid_supervisors || {};
+                    DB.valid_customers = result.data.valid_customers || {};
+                    DB.history = result.data.history || [];
+                    DB.assign = result.data.assign || [];
+                    DB.issues = result.data.issues || [];
+                    
+                    populateProjectDropdown();
+                    if(SESSION.user) {
+                        refreshActivePanels();
+                    }
+                }
+            } catch (error) {
+                console.error("Lỗi đồng bộ dữ liệu: ", error);
+            }
+        }
+
+        function populateProjectDropdown() {
+            const dropdown = document.getElementById("login-project");
+            const projects = Object.keys(DB.project_tree);
+            if(projects.length > 0) {
+                dropdown.innerHTML = "";
+                projects.forEach(p => {
+                    const opt = document.createElement("option");
+                    opt.value = p;
+                    opt.innerText = p;
+                    dropdown.appendChild(opt);
+                });
+            }
+        }
+
+        function toggleAuthFields() {
+            const role = document.querySelector('input[name="role-select"]:checked').value;
+            document.getElementById("field-staff").classList.add("hidden");
+            document.getElementById("field-admin").classList.add("hidden");
+            document.getElementById("field-customer").classList.add("hidden");
+            
+            if (role === "staff") document.getElementById("field-staff").classList.remove("hidden");
+            if (role === "admin") document.getElementById("field-admin").classList.remove("hidden");
+            if (role === "customer") document.getElementById("field-customer").classList.remove("hidden");
+        }
+
+        // HANDLE ACCOUNT ACCESS VALIDATION
+        function handleLogin() {
+            const project = document.getElementById("login-project").value;
+            const role = document.querySelector('input[name="role-select"]:checked').value;
+            
+            if(role === "staff") {
+                const uid = document.getElementById("input-ma-nv").value.trim().toLowerCase();
+                if(!uid) return alert("Vui lòng điền mã số nhân viên!");
+                
+                const matched = DB.nv.find(n => String(n.MaNV).trim().toLowerCase() === uid);
+                if(!matched) return alert(`Mã nhân viên '${uid}' không tồn tại trên hệ thống dữ liệu gốc!`);
+                
+                // Flexible project string containment verification
+                const nvProjects = String(matched.KhuVuc || matched.DuAn || "").toLowerCase();
+                if(!nvProjects.includes(project.toLowerCase())) {
+                    return alert(`Nhân viên ${matched.HoTen} không được phân quyền tại dự án ${project}!`);
+                }
+                
+                SESSION.user = matched.HoTen;
+                SESSION.role = "staff";
+            } 
+            else if(role === "customer") {
+                const room = document.getElementById("input-room-customer").value.trim();
+                if(!room) return alert("Vui lòng điền số phòng/căn hộ!");
+                
+                const allowedRooms = DB.valid_customers[project] || [];
+                const roomClean = room.replace(/\s+/g, '').toLowerCase();
+                const matchedRoom = allowedRooms.find(r => String(r).replace(/\s+/g, '').toLowerCase() === roomClean);
+                
+                if(!matchedRoom) return alert(`Số phòng '${room}' không nằm trong danh sách cấp quyền của dự án ${project}!`);
+                
+                SESSION.user = String(matchedRoom);
+                SESSION.role = "customer";
+            } 
+            else { // Supervisor (Admin) Validation
+                const email = document.getElementById("input-email-admin").value.trim().toLowerCase();
+                if(!email) return alert("Vui lòng nhập Email Giám sát!");
+                
+                const allowedEmails = DB.valid_supervisors[project] || [];
+                if(email !== "admin@gmail.com" && !allowedEmails.map(e => String(e).toLowerCase()).includes(email)) {
+                    return alert(`Email '${email}' không có quyền Giám sát tại dự án ${project}!`);
+                }
+                
+                SESSION.user = `Giám sát [${email}]`;
+                SESSION.role = "admin";
+            }
+            
+            SESSION.project = project;
+            
+            // Toggle Display Screens
+            document.getElementById("auth-screen").classList.add("hidden");
+            document.getElementById("main-panel").classList.remove("hidden");
+            
+            // Build Controls
+            setupMainHeader();
+            refreshActivePanels();
+        }
+
+        function handleLogout() {
+            SESSION = { user: null, role: null, project: null };
+            document.getElementById("main-panel").classList.add("hidden");
+            document.getElementById("auth-screen").classList.remove("hidden");
+            
+            // Clear input forms
+            document.getElementById("input-ma-nv").value = "";
+            document.getElementById("input-email-admin").value = "";
+            document.getElementById("input-room-customer").value = "";
+        }
+
+        function setupMainHeader() {
+            document.getElementById("panel-project-display").innerText = SESSION.project;
+            document.getElementById("panel-username-display").innerText = SESSION.user;
+            
+            const badge = document.getElementById("panel-role-badge");
+            const avatar = document.getElementById("panel-avatar");
+            
+            badge.innerText = SESSION.role === "admin" ? "GIÁM SÁT VIÊN" : (SESSION.role === "staff" ? "NHÂN VIÊN VẬN HÀNH" : "CƯ DÂN CĂN HỘ");
+            avatar.className = "fa-solid " + (SESSION.role === "admin" ? "fa-user-shield" : (SESSION.role === "staff" ? "fa-id-card-clip" : "fa-house-user"));
+        }
+
+        function switchTab(role, view) {
+            if(role === 'cust') {
+                document.getElementById("tab-cust-request").className = "py-3 border-b-2 border-transparent text-sm font-medium text-slate-500 hover:text-slate-800 transition-all whitespace-nowrap";
+                document.getElementById("tab-cust-history").className = "py-3 border-b-2 border-transparent text-sm font-medium text-slate-500 hover:text-slate-800 transition-all whitespace-nowrap";
+                document.getElementById("content-cust-request").classList.add("hidden");
+                document.getElementById("content-cust-history").classList.add("hidden");
+                
+                document.getElementById(`tab-cust-${view}`).classList.add("tab-active");
+                document.getElementById(`content-cust-${view}`).classList.remove("hidden");
+            } else {
+                ['monitor', 'issues', 'assign', 'qc'].forEach(v => {
+                    document.getElementById(`tab-admin-${v}`).className = "py-3 border-b-2 border-transparent text-sm font-medium text-slate-500 hover:text-slate-800 transition-all whitespace-nowrap";
+                    document.getElementById(`content-admin-${v}`).classList.add("hidden");
+                });
+                document.getElementById(`tab-admin-${view}`).classList.add("tab-active");
+                document.getElementById(`content-admin-${view}`).classList.remove("hidden");
+            }
+        }
+
+        function refreshActivePanels() {
+            document.getElementById("panel-customer").classList.add("hidden");
+            document.getElementById("panel-admin").classList.add("hidden");
+            document.getElementById("panel-staff").classList.add("hidden");
+            
+            if(SESSION.role === "customer") {
+                document.getElementById("panel-customer").classList.remove("hidden");
+                renderCustomerPanels();
+            } else if(SESSION.role === "admin") {
+                document.getElementById("panel-admin").classList.remove("hidden");
+                renderSupervisorPanels();
+            } else if(SESSION.role === "staff") {
+                document.getElementById("panel-staff").classList.remove("hidden");
+                renderStaffPanels();
+            }
+        }
+
+        // ========================= CLIENT-SIDE RENDERING: CƯ DÂN =========================
+        function renderCustomerPanels() {
+            // Render Urgent Issues Progress
+            const issueBody = document.getElementById("table-customer-issues-rows");
+            issueBody.innerHTML = "";
+            const myIssues = DB.issues.filter(i => String(i.Khách hàng).trim() === String(SESSION.user).trim() && String(i.Dự án).trim() === SESSION.project);
+            
+            if(myIssues.length === 0) {
+                issueBody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-400 italic">Không có yêu cầu xử lý sự cố phát sinh nào.</td></tr>`;
+            } else {
+                myIssues.forEach(item => {
+                    const issueKey = `SỰ CỐ: Phòng ${item.Khách hàng} - ${item.Nội dung}`;
+                    const jobLog = DB.history.find(h => String(h.Khu_vực || h.KhuVuc).trim() === issueKey || String(h.Công_việc || h.CongViec).trim() === item.Nội dung);
+                    
+                    let staffStatus = `<span class="inline-flex px-2 py-0.5 rounded-md font-semibold text-xs bg-slate-100 text-slate-600">Chưa bắt đầu</span>`;
+                    let qcStatus = `<span class="inline-flex px-2 py-0.5 rounded-md font-semibold text-xs bg-slate-100 text-slate-600">Chờ QC</span>`;
+                    
+                    if(jobLog) {
+                        if(jobLog.Trạng_thái || jobLog.TrangThai === "Đang làm") staffStatus = `<span class="inline-flex px-2 py-0.5 rounded-md font-semibold text-xs bg-blue-100 text-blue-700">⏳ Đang làm (từ ${jobLog.Bắt_đầu || jobLog.BatDau})</span>`;
+                        if(jobLog.Trạng_thái || jobLog.TrangThai === "Hoàn thành") staffStatus = `<span class="inline-flex px-2 py-0.5 rounded-md font-semibold text-xs bg-emerald-100 text-emerald-700">✅ Đã xong (${jobLog.Hoàn_thành || jobLog.HoanThanh})</span>`;
+                        
+                        if(jobLog.Xác_nhận || jobLog.XacNhan === true || jobLog.XacNhan === "True" || jobLog.XacNhan === 1) {
+                            qcStatus = `<span class="inline-flex px-2 py-0.5 rounded-md font-semibold text-xs bg-amber-100 text-amber-700">⭐ Đạt (${jobLog.Thời_gian_QC || jobLog.ThoiGianQC})</span>`;
+                        }
+                    }
+                    
+                    const tr = document.createElement("tr");
+                    tr.className = "hover:bg-slate-50/80 transition-colors";
+                    tr.innerHTML = `
+                        <td class="p-3 font-medium">${item.Ngày}</td>
+                        <td class="p-3 font-semibold text-slate-900">${item.Nội dung}</td>
+                        <td class="p-3"><span class="inline-flex px-2 py-0.5 rounded-md text-xs font-medium ${item.Trạng thái === 'Chờ xử lý' ? 'bg-amber-100 text-amber-700' : 'bg-indigo-100 text-indigo-700'}">${item.Trạng thái}</span></td>
+                        <td class="p-3">${staffStatus}</td>
+                        <td class="p-3">${qcStatus}</td>
+                    `;
+                    issueBody.appendChild(tr);
+                });
+            }
+
+            // Render Regular Cleaning Logs
+            const regularBody = document.getElementById("table-customer-regular-rows");
+            regularBody.innerHTML = "";
+            const myRegularLogs = DB.history.filter(h => String(h.Dự_án || h.DuAn).trim() === SESSION.project && String(h.Khu_vực || h.KhuVuc).includes(SESSION.user) && !String(h.Khu_vực || h.KhuVuc).includes("SỰ CỐ:"));
+            
+            if(myRegularLogs.length === 0) {
+                regularBody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-400 italic">Căn hộ của bạn chưa ghi nhận nhật ký vệ sinh định kỳ hôm nay.</td></tr>`;
+            } else {
+                myRegularLogs.forEach(log => {
+                    const tr = document.createElement("tr");
+                    tr.className = "hover:bg-slate-50/80 text-xs transition-colors";
+                    tr.innerHTML = `
+                        <td class="p-3 font-medium">${log.Ngày}</td>
+                        <td class="p-3 font-semibold text-slate-900">${log.Công_việc || log.CongViec}</td>
+                        <td class="p-3">${log.Bắt_đầu || log.BatDau}</td>
+                        <td class="p-3">${log.Hoàn_thành || log.HoanThanh}</td>
+                        <td class="p-3"><span class="px-2 py-0.5 rounded-md font-bold text-xxs ${log.Trạng_thái === 'Hoàn thành' ? 'bg-emerald-100 text-emerald-700':'bg-blue-100 text-blue-700'}">${log.Trạng_thái || log.TrangThai}</span></td>
+                    `;
+                    regularBody.appendChild(tr);
+                });
+            }
+        }
+
+        async function submitCustomerRequest() {
+            const content = document.getElementById("cust-issue-content").value.trim();
+            if(!content) return alert("Vui lòng điền chi tiết nội dung sự cố!");
+            
+            const payload = {
+                action: "submitRequest",
+                Ngày: today_str,
+                Khu_vực: SESSION.user,
+                Dự_án: SESSION.project,
+                Nội_dung: content,
+                Khách_hàng: SESSION.user,
+                Trạng_thái: "Chờ xử lý"
+            };
+
+            try {
+                const res = await fetch(GAS_URL, { method: "POST", body: JSON.stringify(payload) });
+                const data = await res.json();
+                if(data.status === "success") {
+                    alert("🎉 Gửi thành công! Ban quản lý dự án đã tiếp nhận phản ánh.");
+                    document.getElementById("cust-issue-content").value = "";
+                    await fetchMasterData();
+                }
+            } catch (e) { alert("Có lỗi xảy ra khi đồng bộ Google Sheet!"); }
+        }
+
+        // ========================= CLIENT-SIDE RENDERING: GIÁM SÁT =========================
+        function renderSupervisorPanels() {
+            // Tab 1: Live Monitoring Online
+            const monitorBody = document.getElementById("table-admin-monitor-rows");
+            monitorBody.innerHTML = "";
+            const activeJobs = DB.history.filter(h => String(h.Dự_án || h.DuAn).trim() === SESSION.project && (h.Trạng_thái || h.TrangThai) === "Đang làm" && h.Ngày === today_str);
+            
+            if(activeJobs.length === 0) {
+                monitorBody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-400 italic">Hiện tại chưa ghi nhận nhân viên nào bấm giờ làm việc trực tuyến.</td></tr>`;
+            } else {
+                activeJobs.forEach(j => {
+                    const tr = document.createElement("tr");
+                    tr.className = "hover:bg-slate-50 text-xs";
+                    tr.innerHTML = `
+                        <td class="p-3 font-semibold text-slate-900">${j.Nhân_viên || j.NhanVien}</td>
+                        <td class="p-3 font-medium text-slate-600">${j.Khu_vực || j.KhuVuc}</td>
+                        <td class="p-3 text-slate-700">${j.Công_việc || j.CongViec}</td>
+                        <td class="p-3 font-mono text-blue-600 font-bold">${j.Bắt_đầu || j.BatDau}</td>
+                        <td class="p-3"><span class="px-2 py-0.5 rounded-md bg-blue-100 text-blue-700 font-medium animate-pulse">⚡ Đang làm</span></td>
+                    `;
+                    monitorBody.appendChild(tr);
+                });
+            }
+
+            // Tab 2: Pending Issues
+            const issuesBody = document.getElementById("table-admin-issues-rows");
+            issuesBody.innerHTML = "";
+            const pendingIssues = DB.issues.filter(i => String(i.Dự án || i.DuAn).trim() === SESSION.project && i.Trạng thái === "Chờ xử lý");
+            
+            if(pendingIssues.length === 0) {
+                issuesBody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-emerald-600 font-medium italic">🎉 Không có yêu cầu phản ánh nào của cư dân tồn đọng.</td></tr>`;
+            } else {
+                pendingIssues.forEach(item => {
+                    const tr = document.createElement("tr");
+                    tr.innerHTML = `
+                        <td class="p-3 font-medium">${item.Ngày}</td>
+                        <td class="p-3 font-bold text-rose-700">${item.Khu vực}</td>
+                        <td class="p-3 font-semibold text-slate-900">${item.Nội dung}</td>
+                        <td class="p-3"><span class="px-2 py-0.5 bg-amber-100 text-amber-800 font-medium rounded-md text-xxs">Chờ điều phối</span></td>
+                    `;
+                    issuesBody.appendChild(tr);
+                });
+            }
+
+            // Tab 3: Forms Initializers (Area Options & Staff Options)
+            const areaSelect = document.getElementById("assign-area-select");
+            areaSelect.innerHTML = "";
+            const projTree = DB.project_tree[SESSION.project] || {};
+            Object.keys(projTree).forEach(area => {
+                const opt = document.createElement("option");
+                opt.value = area; opt.innerText = area;
+                areaSelect.appendChild(opt);
+            });
+
+            const issueSelect = document.getElementById("assign-issue-select");
+            issueSelect.innerHTML = "";
+            pendingIssues.forEach((item, idx) => {
+                const opt = document.createElement("option");
+                opt.value = item.row_index; // unique row tracking index from script
+                opt.innerText = `Phòng ${item.Khu vực}: ${item.Nội dung}`;
+                issueSelect.appendChild(opt);
+            });
+
+            const staffCheckboxes = document.getElementById("assign-staff-checkboxes");
+            staffCheckboxes.innerHTML = "";
+            // Filter roster belonging to project
+            const myRoster = DB.nv.filter(n => String(n.KhuVuc || n.DuAn || "").toLowerCase().includes(SESSION.project.toLowerCase()));
+            myRoster.forEach((staff, i) => {
+                const div = document.createElement("div");
+                div.className = "flex items-center gap-2";
+                div.innerHTML = `
+                    <input type="checkbox" id="chk-staff-${i}" value="${staff.HoTen}" class="w-3.5 h-3.5 rounded text-blue-600 focus:ring-blue-500">
+                    <label for="chk-staff-${i}" class="font-medium text-slate-700">${staff.HoTen} (${staff.MaNV})</label>
+                `;
+                staffCheckboxes.appendChild(div);
+            });
+
+            // Display Assignments Log Panel
+            const dispatchBody = document.getElementById("table-admin-dispatch-rows");
+            dispatchBody.innerHTML = "";
+            const currentAssignments = DB.assign.filter(a => String(a.Dự án || a.DuAn).trim() === SESSION.project && a.Ngày === today_str);
+            if(currentAssignments.length === 0) {
+                dispatchBody.innerHTML = `<tr><td colspan="2" class="p-3 text-center text-slate-400 italic">Chưa phát lệnh phân công nào trong ngày hôm nay.</td></tr>`;
+            } else {
+                currentAssignments.forEach(a => {
+                    const tr = document.createElement("tr");
+                    tr.innerHTML = `
+                        <td class="p-3 font-semibold text-slate-900">${a.Nhân viên}</td>
+                        <td class="p-3 font-medium text-slate-700">${a.Khu vực}</td>
+                    `;
+                    dispatchBody.appendChild(tr);
+                });
+            }
+
+            // Tab 4: QC Configuration Views
+            const qcPendingBody = document.getElementById("table-admin-qc-pending-rows");
+            qcPendingBody.innerHTML = "";
+            const finishedLogs = DB.history.filter(h => String(h.Dự_án || h.DuAn).trim() === SESSION.project && h.Ngày === today_str && (h.Trạng_thái || h.TrangThai) === "Hoàn thành" && !(h.Xác_nhận === true || h.XacNhan === "True" || h.XacNhan === 1));
+            
+            if(finishedLogs.length === 0) {
+                qcPendingBody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-slate-400 italic">Không có đầu việc nào đang chờ duyệt nghiệm thu chất lượng.</td></tr>`;
+            } else {
+                finishedLogs.forEach((log, idx) => {
+                    const tr = document.createElement("tr");
+                    tr.className = "hover:bg-slate-50 text-xs";
+                    tr.innerHTML = `
+                        <td class="p-3 text-center"><input type="checkbox" name="qc-check-item" value="${log.row_index}" class="w-4 h-4 text-emerald-600 rounded"></td>
+                        <td class="p-3 font-semibold text-slate-900">${log.Khu_vực || log.KhuVuc}</td>
+                        <td class="p-3 text-slate-700">${log.Công_việc || log.CongViec}</td>
+                        <td class="p-3 font-medium text-slate-800">${log.Nhân_viên || log.NhanVien}</td>
+                        <td class="p-3 font-mono text-slate-500">${log.Bắt_đầu || log.BatDau} ➔ ${log.Hoàn_thành || log.HoanThanh}</td>
+                        <td class="p-3"><span class="px-2 py-0.5 bg-amber-100 text-amber-800 rounded font-medium text-xxs">Chờ duyệt</span></td>
+                    `;
+                    qcPendingBody.appendChild(tr);
+                });
+            }
+
+            const qcPassedBody = document.getElementById("table-admin-qc-passed-rows");
+            qcPassedBody.innerHTML = "";
+            const passedLogs = DB.history.filter(h => String(h.Dự_án || h.DuAn).trim() === SESSION.project && h.Ngày === today_str && (h.Xác_nhận === true || h.XacNhan === "True" || h.XacNhan === 1));
+            if(passedLogs.length === 0) {
+                qcPassedBody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-400 italic">Chưa có đầu việc nào được phê duyệt đạt chuẩn hôm nay.</td></tr>`;
+            } else {
+                passedLogs.forEach(log => {
+                    const tr = document.createElement("tr");
+                    tr.className = "hover:bg-slate-50 text-xs";
+                    tr.innerHTML = `
+                        <td class="p-3 font-medium">${log.Khu_vực || log.KhuVuc}</td>
+                        <td class="p-3 font-semibold text-slate-900">${log.Công_việc || log.CongViec}</td>
+                        <td class="p-3">${log.Nhân_viên || log.NhanVien}</td>
+                        <td class="p-3 font-mono">${log.Bắt_đầu || log.BatDau} ➔ ${log.Hoàn_thành || log.HoanThanh}</td>
+                        <td class="p-3 text-emerald-600 font-bold"><i class="fa-solid fa-certificate mr-1"></i> ${log.Thời_gian_QC || log.ThoiGianQC}</td>
+                    `;
+                    qcPassedBody.appendChild(tr);
+                });
+            }
+        }
+
+        function toggleAssignSourceFields() {
+            const val = document.querySelector('input[name="assign-source"]:checked').value;
+            if(val === 'standard') {
+                document.getElementById("assign-field-standard").classList.remove("hidden");
+                document.getElementById("assign-field-issue").classList.add("hidden");
+            } else {
+                document.getElementById("assign-field-standard").classList.add("hidden");
+                document.getElementById("assign-field-issue").classList.remove("hidden");
+            }
+        }
+
+        async function dispatchAssignment() {
+            const source = document.querySelector('input[name="assign-source"]:checked').value;
+            const checkedStaff = Array.from(document.querySelectorAll('#assign-staff-checkboxes input:checked')).map(el => el.value);
+            
+            if(checkedStaff.length === 0) return alert("Vui lòng tích lựa chọn ít nhất một nhân viên thực hiện!");
+            
+            let targetArea = "";
+            let targetIssueRowIndex = null;
+            
+            if(source === 'standard') {
+                targetArea = document.getElementById("assign-area-select").value;
+            } else {
+                const selectEl = document.getElementById("assign-issue-select");
+                if(!selectEl.value) return alert("Không có phiếu sự cố nào khả dụng!");
+                targetIssueRowIndex = selectEl.value;
+                targetArea = selectEl.options[selectEl.selectedIndex].text;
+            }
+
+            const payload = {
+                action: "assignTask",
+                Ngày: today_str,
+                Dự_án: SESSION.project,
+                Khu_vực: targetArea,
+                Nhân_viên_mảng: checkedStaff,
+                Tính_chất: source,
+                Sự_cố_row_index: targetIssueRowIndex
+            };
+
+            try {
+                const res = await fetch(GAS_URL, { method: "POST", body: JSON.stringify(payload) });
+                const data = await res.json();
+                if(data.status === "success") {
+                    alert("🚀 Đã phát phân công thành công!");
+                    await fetchMasterData();
+                }
+            } catch(e) { alert("Lỗi đồng bộ phân công lên Google Sheets!"); }
+        }
+
+        async function commitQCOutcomes() {
+            const checkedRows = Array.from(document.querySelectorAll('input[name="qc-check-item"]:checked')).map(el => el.value);
+            if(checkedRows.length === 0) return alert("Vui lòng tích chọn ít nhất một đầu việc cần nghiệm thu!");
+            
+            const options = { timeZone: "Asia/Ho_Chi_Minh", hour: '2-digit', minute: '2-digit' };
+            const timeStr = new Intl.DateTimeFormat('vi-VN', options).format(new Date()) + " " + datetime.now(VN_TZ).strftime("%d/%m"); // simple formatted stamp
+            const formattedTime = new Date().toLocaleTimeString('vi-VN', {hour: '2-digit', minute:'2-digit'}) + " " + new Date().toLocaleDateString('vi-VN', {day:'2-digit', month:'2-digit'});
+
+            const payload = {
+                action: "approveQC",
+                Hàng_mảng: checkedRows,
+                Thời_gian_QC: formattedTime
+            };
+
+            try {
+                const res = await fetch(GAS_URL, { method: "POST", body: JSON.stringify(payload) });
+                const data = await res.json();
+                if(data.status === "success") {
+                    alert("🔒 Đã chốt nghiệm thu và khóa bảo lưu dữ liệu!");
+                    await fetchMasterData();
+                }
+            } catch(e) { alert("Lỗi đồng bộ lệnh QC lên Google Sheets!"); }
+        }
+
+        // ========================= CLIENT-SIDE RENDERING: NHÂN VIÊN =========================
+        function renderStaffPanels() {
+            // Urgent Emergency Work Filters
+            const emergencyBox = document.getElementById("staff-emergency-box");
+            const emergencyList = document.getElementById("staff-emergency-list");
+            emergencyList.innerHTML = "";
+            
+            // Look into Assignment Table
+            const myAssignedJobs = DB.assign.filter(a => String(a.Nhân viên).trim() === SESSION.user && a.Ngày === today_str && String(a.Dự án).trim() === SESSION.project);
+            const emergencyJobs = myAssignedJobs.filter(a => String(a.Khu vực).includes("SỰ CỐ:"));
+            
+            if(emergencyJobs.length > 0) {
+                emergencyBox.classList.remove("hidden");
+                emergencyJobs.forEach((job, idx) => {
+                    const jobName = job.Khu vực;
+                    const matchedLog = DB.history.find(h => h.Ngày === today_str && String(h.Nhân_viên || h.NhanVien).trim() === SESSION.user && String(h.Công_việc || h.CongViec).trim() === jobName.trim() && String(h.Dự_án || h.DuAn).trim() === SESSION.project);
+                    
+                    let statusHtml = `<span class="text-xs text-rose-600 font-bold bg-rose-100 px-2 py-1 rounded-lg"><i class="fa-solid fa-spinner fa-spin mr-1"></i> Chờ xử lý</span>`;
+                    let buttonHtml = `<button onclick="punchClockAction('start', '${jobName}', 'Việc phát sinh')" class="bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs px-4 py-2 rounded-xl shadow-xs">🚀 Bắt đầu làm</button>`;
+                    
+                    if(matchedLog) {
+                        if(matchedLog.Trạng_thái || matchedLog.TrangThai === "Đang làm") {
+                            statusHtml = `<span class="text-xs text-blue-600 font-bold bg-blue-100 px-2 py-1 rounded-lg">⏳ Đang dọn dẹp (từ: ${matchedLog.Bắt_đầu})</span>`;
+                            buttonHtml = `<button onclick="punchClockAction('end', '${jobName}', 'Việc phát sinh', ${matchedLog.row_index})" class="bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs px-4 py-2 rounded-xl shadow-xs">✅ Hoàn thành</button>`;
+                        } else if(matchedLog.Trạng_thái || matchedLog.TrangThai === "Hoàn thành") {
+                            statusHtml = `<span class="text-xs text-emerald-600 font-bold bg-emerald-100 px-2 py-1 rounded-lg">✅ Đã xong lúc ${matchedLog.Hoàn_thành}</span>`;
+                            buttonHtml = matchedLog.Xác_nhận ? `<span class="text-xs text-amber-600 font-semibold italic"><i class="fa-solid fa-star"></i> Giám sát đã đạt QC</span>` : `<span class="text-xs text-slate-400 italic">Chờ QC nghiệm thu</span>`;
+                        }
+                    }
+
+                    const item = document.createElement("div");
+                    item.className = "bg-white border border-rose-100 rounded-xl p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 shadow-2xs";
+                    item.innerHTML = `
+                        <div>
+                            <div class="text-sm font-bold text-slate-900">${jobName}</div>
+                            <div class="mt-1">${statusHtml}</div>
+                        </div>
+                        <div>${buttonHtml}</div>
+                    `;
+                    emergencyList.appendChild(item);
+                });
+            } else {
+                emergencyBox.classList.add("hidden");
+            }
+
+            // Fill Regular Areas Options Dropdown
+            const staffAreaSelect = document.getElementById("staff-area-select");
+            const currentSelected = staffAreaSelect.value;
+            staffAreaSelect.innerHTML = "";
+            
+            const projTree = DB.project_tree[SESSION.project] || {};
+            Object.keys(projTree).forEach(area => {
+                const opt = document.createElement("option");
+                opt.value = area; opt.innerText = area;
+                staffAreaSelect.appendChild(opt);
+            });
+            
+            if(currentSelected && projTree[currentSelected]) {
+                staffAreaSelect.value = currentSelected;
+            }
+            
+            renderStaffRegularJobs();
+        }
+
+        function renderStaffRegularJobs() {
+            const selectedArea = document.getElementById("staff-area-select").value;
+            const container = document.getElementById("staff-regular-jobs-list");
+            container.innerHTML = "";
+            
+            if(!selectedArea) return;
+            const jobsList = DB.project_tree[SESSION.project][selectedArea] || [];
+            
+            if(jobsList.length === 0) {
+                container.innerHTML = `<div class="p-4 text-center text-slate-400 italic bg-slate-50 border border-dashed border-slate-200 rounded-xl">Khu vực này chưa thiết lập danh mục công việc chuẩn.</div>`;
+                return;
+            }
+
+            jobsList.forEach((job, i) => {
+                const matchedLog = DB.history.find(h => h.Ngày === today_str && String(h.Nhân_viên || h.NhanVien).trim() === SESSION.user && String(h.Công_việc || h.CongViec).trim() === job.trim() && String(h.Khu_vực || h.KhuVuc).trim() === selectedArea.trim() && String(h.Dự_án || h.DuAn).trim() === SESSION.project);
+                
+                let statusCardHtml = `<span class="text-xs text-slate-500 font-semibold bg-slate-100 px-2 py-1 rounded-lg">🔄 Chưa thực hiện</span>`;
+                let actionBtnHtml = `<button onclick="punchClockAction('start', '${job}', '${selectedArea}')" class="bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs px-4 py-1.5 rounded-xl shadow-xs flex items-center gap-1.5">🚀 Bắt đầu</button>`;
+                
+                if(matchedLog) {
+                    if((matchedLog.Trạng_thái || matchedLog.TrangThai) === "Đang làm") {
+                        statusCardHtml = `<span class="text-xs text-blue-600 font-bold bg-blue-100 px-2 py-1 rounded-lg">⏳ Đang xử lý (từ ${matchedLog.Bắt_đầu})</span>`;
+                        actionBtnHtml = `<button onclick="punchClockAction('end', '${job}', '${selectedArea}', ${matchedLog.row_index})" class="bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs px-4 py-1.5 rounded-xl shadow-xs flex items-center gap-1.5">✅ Xong</button>`;
+                    } else if((matchedLog.Trạng_thái || matchedLog.TrangThai) === "Hoàn thành") {
+                        statusCardHtml = `<span class="text-xs text-emerald-600 font-bold bg-emerald-100 px-2 py-1 rounded-lg"><i class="fa-solid fa-circle-check"></i> Xong: ${matchedLog.Bắt_đầu} ➔ ${matchedLog.Hoàn_thành}</span>`;
+                        actionBtnHtml = matchedLog.Xác_nhận ? `<div class="text-right"><span class="text-xs text-amber-600 font-bold block"><i class="fa-solid fa-medal"></i> Đạt QC</span><span class="text-slate-400 text-xxs block">${matchedLog.Thời_gian_QC || ''}</span></div>` : `<span class="text-xs text-slate-400 italic">Chờ duyệt QC</span>`;
+                    }
+                }
+
+                const row = document.createElement("div");
+                row.className = "bg-slate-50 border border-slate-200/60 rounded-xl p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 transition-all hover:bg-slate-100/40";
+                row.innerHTML = `
+                    <div>
+                        <div class="text-sm font-semibold text-slate-900">${job}</div>
+                        <div class="mt-1.5">${statusCardHtml}</div>
+                    </div>
+                    <div>${actionBtnHtml}</div>
+                `;
+                container.appendChild(row);
+            });
+        }
+
+        async function punchClockAction(type, job, area, rowIndex = null) {
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('vi-VN', { hour12: false });
+            
+            const payload = {
+                action: "punchClock",
+                Kiểu: type,
+                Ngày: today_str,
+                Dự_án: SESSION.project,
+                Khu_vực: area,
+                Công_việc: job,
+                Nhân_viên: SESSION.user,
+                Thời_gian: timeStr,
+                Hàng_row_index: rowIndex
+            };
+
+            try {
+                const res = await fetch(GAS_URL, { method: "POST", body: JSON.stringify(payload) });
+                const data = await res.json();
+                if(data.status === "success") {
+                    await fetchMasterData();
+                }
+            } catch(e) { alert("Lỗi ghi nhận đồng bộ bấm giờ lên Google Sheet!"); }
+        }
+
+        // AUTO TIMESTAMP HELPER
+        const today_str = new Date().toLocaleDateString('en-CA'); // YYYY-MM-DD format dynamically matches today_str
+    </script>
+</body>
+</html>
