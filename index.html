@@ -33,7 +33,6 @@
       padding: 20px;
     }
 
-    /* Giao diện khung hộp */
     .card {
       background: var(--card-bg);
       border-radius: 12px;
@@ -62,7 +61,6 @@
       opacity: 0.8;
     }
 
-    /* Thẻ thông tin người dùng đăng nhập */
     .user-profile {
       display: flex;
       align-items: center;
@@ -94,7 +92,6 @@
       color: #666;
     }
 
-    /* Tab điều hướng */
     .tabs {
       display: flex;
       border-bottom: 2px solid var(--border-color);
@@ -118,7 +115,6 @@
       border-bottom-color: var(--primary-color);
     }
 
-    /* Biểu mẫu nhóm nhập liệu */
     .form-group {
       margin-bottom: 18px;
     }
@@ -192,7 +188,11 @@
       background: #1557b0;
     }
 
-    /* Ẩn hiện màn hình */
+    button.btn-submit:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+
     .view-section {
       display: none;
     }
@@ -273,11 +273,11 @@
       
       <div class="form-group">
         <label>Nhân viên thực hiện:</label>
-        <input type="text" id="assign-staff" list="staff-suggestions" placeholder="Nhập tên hoặc mã nhân viên để tìm kiếm...">
+        <input type="text" id="assign-staff" list="staff-suggestions" placeholder="Nhập tên hoặc mã để tra cứu...">
         <datalist id="staff-suggestions"></datalist>
       </div>
       
-      <button class="btn-submit" onclick="submitAssignment()"><i class="fa-solid fa-paper-plane"></i> Phát lệnh phân công ngay</button>
+      <button class="btn-submit" id="btn-submit-assignment" onclick="submitAssignment()"><i class="fa-solid fa-paper-plane"></i> Phát lệnh ngay</button>
     </div>
 
     <button style="background:none; border:none; color:#888; cursor:pointer; text-decoration:underline; font-size:13px;" onclick="logout()"><i class="fa-solid fa-arrow-left"></i> Đăng xuất hệ thống</button>
@@ -286,47 +286,42 @@
 </div>
 
 <script>
-  // CẤU HÌNH LIÊN KẾT: Thay thế link bên dưới bằng link Web App Google Apps Script của bạn
+  // ĐẢM BẢO ĐIỀN LINK WEB APP TẠI ĐÂY
   const GAS_URL = "https://script.google.com/macros/s/AKfycbxzEcHa3MFSN-bWkOuUCjsnPY_wEcu3-vQJ-NW3CphptLUCBdfIa8iX_YzuoAz4mgOK/exec";
 
-  // Bộ nhớ đệm dữ liệu ứng dụng toàn cục
   let DB = { projects: [], nv: [], project_tree: {} };
   let SESSION = { role: "Giám sát", identity: "", project: "", name: "" };
 
-  // 1. TỰ ĐỘNG TẢI DỮ LIỆU TỪ GOOGLE SHEETS NGAY KHI MỞ TRANG
+  // 1. TẢI CƠ SỞ DỮ LIỆU BAN ĐẦU (ANTI-CACHE)
   function fetchMasterData() {
-    if (!GAS_URL) {
-      alert("Chưa cấu hình link GAS_URL! Vui lòng kiểm tra lại mã nguồn.");
+    if (!GAS_URL || GAS_URL.includes("...")) {
+      alert("Vui lòng gắn liên kết Web App Apps Script (GAS_URL) chính xác!");
       return;
     }
     
-    // Đuôi mốc thời gian chống dính Cache trình duyệt (Anti-cache)
-    const urlWithAntiCache = `${GAS_URL}?action=getInitData&_=${new Date().getTime()}`;
+    const url = `${GAS_URL}?action=getInitData&_=${new Date().getTime()}`;
     
-    fetch(urlWithAntiCache)
+    fetch(url)
       .then(res => res.json())
       .then(res => {
         if (res.status === "success") {
           DB = res.data;
-          buildProjectSelectOptions(); // Nạp dự án vào danh sách đăng nhập
+          buildProjectSelectOptions();
         } else {
-          alert("Lỗi nạp cơ sở dữ liệu: " + res.message);
+          alert("Không thể đọc cấu trúc danh mục: " + res.message);
         }
       })
       .catch(err => {
-        console.error("Lỗi API kết nối hệ thống: ", err);
-        alert("Không thể kết nối với máy chủ Google Apps Script!");
+        console.error("Lỗi API: ", err);
       });
   }
 
-  // 2. XÂY DỰNG DANH SÁCH CHỌN DỰ ÁN TẠI GIAO DIỆN ĐĂNG NHẬP
+  // 2. NẠP DỰ ÁN VÀO MÀN HÌNH ĐĂNG NHẬP
   function buildProjectSelectOptions() {
     const select = document.getElementById("login-project");
     if (!select) return;
     
-    // Lấy mảng key dự án từ object project_tree
     const projects = Object.keys(DB.project_tree || {});
-    
     if (projects.length === 0) {
       select.innerHTML = '<option value="">-- Không có dữ liệu dự án --</option>';
       return;
@@ -338,28 +333,23 @@
     });
   }
 
-  // 3. XỬ LÝ SỰ KIỆN THAY ĐỔI VAI TRÒ TRÊN GIAO DIỆN ĐĂNG NHẬP
   function selectRole(role) {
     SESSION.role = role;
-    
-    // Thay đổi trạng thái active của nút bấm vai trò
     document.querySelectorAll('.role-btn').forEach(btn => btn.classList.remove('active'));
     event.currentTarget.classList.add('active');
     
-    // Đổi nhãn chỉ dẫn tương ứng theo vai trò
     const label = document.getElementById("label-identity");
     const input = document.getElementById("login-identity");
-    
     if (role === "Cư dân") {
       label.innerText = "Số phòng khách hàng:";
-      input.placeholder = "Nhập số căn hộ/phòng của cư dân";
+      input.placeholder = "Nhập số căn hộ/phòng";
     } else {
       label.innerText = "Mã số nhân viên:";
-      input.placeholder = "Nhập mã nhân viên (Ví dụ: 111000, NV01)";
+      input.placeholder = "Nhập mã nhân viên (Ví dụ: 111000)";
     }
   }
 
-  // 4. LOGIC XỬ LÝ ĐĂNG NHẬP & CHUYỂN MÀN HÌNH ĐIỀU HÀNH
+  // 3. LOGIC ĐĂNG NHẬP
   function handleLogin() {
     const selectedProj = document.getElementById("login-project").value;
     const identityVal = document.getElementById("login-identity").value.trim();
@@ -369,74 +359,59 @@
       return;
     }
     if (!identityVal) {
-      alert("Vui lòng nhập Mã định danh xác thực truy cập!");
+      alert("Vui lòng nhập Mã xác thực truy cập!");
       return;
     }
     
     SESSION.project = selectedProj;
     SESSION.identity = identityVal;
-    SESSION.name = identityVal; // Mặc định hiển thị tên tạm bằng ID nhập vào
+    SESSION.name = identityVal;
 
-    // Lọc tìm tên thật từ danh sách nhân viên nếu có trùng khớp mã
     if (DB.nv && Array.isArray(DB.nv)) {
       const matchStaff = DB.nv.find(emp => emp.DuAn === selectedProj && emp.MaNV.toString() === identityVal);
-      if (matchStaff) {
-        SESSION.name = matchStaff.HoTen;
-      }
+      if (matchStaff) SESSION.name = matchStaff.HoTen;
     }
 
-    // Hiển thị thông tin hồ sơ phiên làm việc lên màn hình chính
     document.getElementById("txt-role-display").innerText = SESSION.role + " trường";
     document.getElementById("txt-username-display").innerText = SESSION.name.toUpperCase();
     document.getElementById("txt-project-display").innerHTML = `<i class="fa-solid fa-building"></i> Dự án vận hành: <b>${SESSION.project}</b>`;
     
-    // Đồng bộ ngay lập tức các ô chọn Khu vực và Gợi ý nhân viên riêng biệt của Dự án này
     refreshPanelViews();
     
-    // Đổi view màn hình
     document.getElementById("view-login").classList.remove("active");
     document.getElementById("view-main").classList.add("active");
   }
 
-  // 5. CHỨC NĂNG SỬA LỖI: CẬP NHẬT ĐỘNG KHU VỰC VÀ BỘ GỢI Ý TÌM KIẾM NHÂN VIÊN
+  // 4. ĐỒNG BỘ KHU VỰC VÀ TẠO BỘ TÌM KIẾM GỢI Ý NHÂN VIÊN CHUẨN XÁC
   function refreshPanelViews() {
     const currentProject = SESSION.project;
     if (!currentProject) return;
 
-    // --- A. CẬP NHẬT DANH SÁCH CÁC KHU VỰC CỦA RIÊNG DỰ ÁN ---
+    // A. Nạp danh sách khu vực động theo dự án
     const areaSelect = document.getElementById("assign-area");
     if (areaSelect) {
       areaSelect.innerHTML = '<option value="">-- Chọn khu vực --</option>';
-      
       if (DB.project_tree && DB.project_tree[currentProject]) {
         const areas = Object.keys(DB.project_tree[currentProject]);
-        
-        if (areas.length > 0) {
-          areas.forEach(area => {
-            if (area) {
-              areaSelect.innerHTML += `<option value="${area}">${area}</option>`;
-            }
-          });
-        } else {
-          areaSelect.innerHTML = '<option value="">-- Dự án này chưa cấu hình phân khu --</option>';
-        }
+        areas.forEach(area => {
+          if (area) areaSelect.innerHTML += `<option value="${area}">${area}</option>`;
+        });
       }
     }
 
-    // --- B. TẠO BỘ TỰ ĐỘNG GỢI Ý/TÌM KIẾM NHÂN VIÊN (AUTO-COMPLETE) THEO DỰ ÁN ---
+    // B. Tạo danh sách gợi ý nhân viên tự động (Auto-complete)
     const staffDatalist = document.getElementById("staff-suggestions");
     const staffInput = document.getElementById("assign-staff");
     
     if (staffDatalist) {
-      staffDatalist.innerHTML = ""; // Xóa dữ liệu gợi ý của phiên trước
-      if (staffInput) staffInput.value = ""; // Đặt lại ô nhập về trống rỗng
+      staffDatalist.innerHTML = "";
+      if (staffInput) staffInput.value = "";
       
       if (DB.nv && Array.isArray(DB.nv)) {
-        // Lọc chính xác danh sách nhân viên thuộc dự án đang chọn
+        // Lọc nhân viên có mã số thuộc riêng dự án đã chọn
         const filteredStaffs = DB.nv.filter(emp => emp.DuAn === currentProject && emp.MaNV);
-        
         filteredStaffs.forEach(staff => {
-          // Định dạng ghép chuỗi: "Mã Số - Tên Gọi" -> Thuận tiện tìm kiếm bằng cả Tên hoặc Mã
+          // Định dạng: "Mã Số - Họ Tên" để tìm kiếm linh hoạt theo cả 2 trường thông tin
           const suggestionValue = `${staff.MaNV} - ${staff.HoTen}`;
           staffDatalist.innerHTML += `<option value="${suggestionValue}"></option>`;
         });
@@ -444,20 +419,11 @@
     }
   }
 
-  // 6. CHUYỂN ĐỔI TAB LÀM VIỆC TRÊN MÀN HÌNH CHÍNH
-  function switchTab(tabName) {
-    document.querySelectorAll('.tab-item').forEach(tab => tab.classList.remove('active'));
-    document.getElementById('content-monitor').classList.remove('active');
-    document.getElementById('content-assign').classList.remove('active');
-    
-    document.getElementById(`tab-${tabName}`).classList.add('active');
-    document.getElementById(`content-${tabName}`).classList.add('active');
-  }
-
-  // 7. XỬ LÝ SỰ KIỆN PHÁT LỆNH PHÂN CÔNG
+  // 5. KÍCH HOẠT NÚT PHÁT LỆNH - GỬI DỮ LIỆU ĐẾN GOOGLE SHEET KHÔNG LỖI CACHE
   function submitAssignment() {
     const area = document.getElementById("assign-area").value;
     const staffText = document.getElementById("assign-staff").value.trim();
+    const btnSubmit = document.getElementById("btn-submit-assignment");
     
     if (!area) {
       alert("Vui lòng chọn Khu vực chuẩn trước khi phát lệnh!");
@@ -467,18 +433,82 @@
       alert("Vui lòng nhập hoặc chọn Nhân viên thực hiện lệnh!");
       return;
     }
-    
-    alert(`⚡ LỆNH ĐIỀU HÀNH ĐÃ ĐƯỢC PHÁT:\n- Dự án: ${SESSION.project}\n- Khu vực: ${area}\n- Nhân sự phụ trách: ${staffText}`);
+
+    let staffId = "";
+    let staffName = staffText;
+
+    // Nếu người dùng chọn từ danh sách gợi ý dạng "111000 - Chu Thị Bích Liên"
+    if (staffText.includes(" - ")) {
+      const parts = staffText.split(" - ");
+      staffId = parts[0].trim();
+      staffName = parts[1].trim();
+    } else {
+      // Trường hợp gõ tay tự do, kiểm tra xem có khớp với mã hoặc tên nào không
+      const matched = DB.nv.find(emp => 
+        emp.DuAn === SESSION.project && 
+        (emp.MaNV.toString() === staffText || emp.HoTen.toLowerCase() === staffText.toLowerCase())
+      );
+      if (matched) {
+        staffId = matched.MaNV;
+        staffName = matched.HoTen;
+      } else {
+        alert("Nhân viên không tồn tại trong dự án hiện tại. Vui lòng chọn lại danh sách gợi ý!");
+        return;
+      }
+    }
+
+    // Khóa nút để tránh spam đúp dữ liệu
+    btnSubmit.disabled = true;
+    btnSubmit.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Đang ghi nhận phân công...`;
+
+    // Khởi tạo FormData đẩy gói dữ liệu POST sang API `doPost` của Apps Script
+    const formData = new URLSearchParams();
+    formData.append("action", "addStaff");
+    formData.append("project", SESSION.project);
+    formData.append("staffId", staffId);
+    formData.append("staffName", staffName);
+
+    fetch(GAS_URL, {
+      method: "POST",
+      body: formData,
+      headers: { "Content-Type": "application/x-www-form-urlencoded" }
+    })
+    .then(res => res.json())
+    .then(res => {
+      if (res.status === "success") {
+        alert(`🎉 Phát lệnh thành công!\nĐã cập nhật nhân sự phụ trách vào Google Sheets.`);
+        document.getElementById("assign-staff").value = "";
+        // Làm mới dữ liệu ngầm từ máy chủ
+        fetchMasterData();
+      } else {
+        alert("Lỗi ghi nhận từ máy chủ: " + res.message);
+      }
+    })
+    .catch(err => {
+      console.error("Lỗi kết nối mạng: ", err);
+      alert("Không thể gửi yêu cầu phân công, vui lòng kiểm tra kết nối mạng!");
+    })
+    .finally(() => {
+      btnSubmit.disabled = false;
+      btnSubmit.innerHTML = `<i class="fa-solid fa-paper-plane"></i> Phát lệnh ngay`;
+    });
   }
 
-  // 8. ĐĂNG XUẤT QUAY LẠI MÀN HÌNH ĐĂNG NHẬP
+  function switchTab(tabName) {
+    document.querySelectorAll('.tab-item').forEach(tab => tab.classList.remove('active'));
+    document.getElementById('content-monitor').classList.remove('active');
+    document.getElementById('content-assign').classList.remove('active');
+    
+    document.getElementById(`tab-${tabName}`).classList.add('active');
+    document.getElementById(`content-${tabName}`).classList.add('active');
+  }
+
   function logout() {
     document.getElementById("view-main").classList.remove("active");
     document.getElementById("view-login").classList.add("active");
     document.getElementById("login-identity").value = "";
   }
 
-  // Kích hoạt chạy tải dữ liệu Google Sheets ngay khi trình duyệt đọc xong file HTML này
   window.onload = function() {
     fetchMasterData();
   };
