@@ -18,138 +18,138 @@
     <div class="bg-slate-900 text-white text-xs px-4 py-2 flex justify-between items-center shadow-inner">
         <div class="flex items-center gap-3">
             <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-500/20 text-emerald-400">
-                <span class="w-1.5 h-1.5 mr-1.5 bg-emerald-400 rounded-full animate-pulse"></span> Hệ thống trực tuyến
+                <span class="w-1.5 h-1.5 mr-1.5 bg-emerald-400 rounded-full animate-pulse"></span> Trực tuyến
             </span>
             <span id="current-time-display" class="opacity-70"></span>
         </div>
-        <div class="text-slate-400 font-medium">Real-time Google Sheets Synchronization</div>
+        <div class="text-slate-400 font-medium">Hệ thống Đồng bộ Google Sheets Real-time</div>
     </div>
 
     <div id="app" class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
 
         <div id="auth-screen" class="max-w-xl mx-auto mt-8 bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
             <div class="bg-slate-900 p-6 text-center text-white">
-                <div class="inline-flex p-3 bg-white/10 rounded-2xl mb-3"><i class="fa-solid fa-building-shield text-2xl text-blue-400"></i></div>
                 <h2 class="text-xl font-bold tracking-tight">HỆ THỐNG ĐIỀU HÀNH ĐA DỰ ÁN</h2>
-                <p class="text-xs text-slate-400 mt-1">Phân quyền Vận hành & Cập nhật nhân sự tức thì</p>
+                <p class="text-xs text-slate-400 mt-1">Phiên bản Web cao cấp - Tối ưu hóa vận hành & Khóa dữ liệu</p>
             </div>
             
-            <div class="p-6 space-y-6">
+            <div class="p-6 space-y-5">
                 <div>
-                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2"><i class="fa-solid fa-map-location-dot mr-1"></i> Bước 1: Chọn dự án làm việc</label>
-                    <select id="login-project" onchange="handleProjectChange()" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all font-medium"></select>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">
+                        <i class="fa-solid fa-map-location-dot mr-1"></i> Bước 1: Chọn dự án làm việc
+                    </label>
+                    <select id="login-project" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium"></select>
                 </div>
 
                 <div>
-                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2"><i class="fa-solid fa-users-gear mr-1"></i> Bước 2: Chọn vai trò truy cập</label>
-                    <div class="grid grid-cols-2 gap-3">
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">
+                        <i class="fa-solid fa-users-gear mr-1"></i> Bước 2: Chọn vai trò truy cập
+                    </label>
+                    <div class="grid grid-cols-3 gap-2">
                         <label class="cursor-pointer group">
                             <input type="radio" name="role-select" value="staff" checked onchange="toggleAuthFields()" class="peer sr-only">
-                            <div class="p-3 border border-slate-200 bg-slate-50 rounded-xl text-center transition-all group-hover:bg-slate-100 peer-checked:border-blue-500 peer-checked:bg-blue-50/50 peer-checked:text-blue-600">
-                                <i class="fa-solid fa-id-card-clip text-lg mb-1 block"></i>
-                                <span class="text-xs font-medium">Nhân viên ca trực</span>
+                            <div class="p-2.5 border border-slate-200 bg-slate-50 rounded-xl text-center transition-all peer-checked:border-blue-500 peer-checked:bg-blue-50 peer-checked:text-blue-600">
+                                <i class="fa-solid fa-id-card-clip text-sm mb-1 block"></i>
+                                <span class="text-xs font-medium">Nhân viên</span>
                             </div>
                         </label>
                         <label class="cursor-pointer group">
                             <input type="radio" name="role-select" value="admin" onchange="toggleAuthFields()" class="peer sr-only">
-                            <div class="p-3 border border-slate-200 bg-slate-50 rounded-xl text-center transition-all group-hover:bg-slate-100 peer-checked:border-blue-500 peer-checked:bg-blue-50/50 peer-checked:text-blue-600">
-                                <i class="fa-solid fa-user-shield text-lg mb-1 block"></i>
-                                <span class="text-xs font-medium">Giám sát viên</span>
+                            <div class="p-2.5 border border-slate-200 bg-slate-50 rounded-xl text-center transition-all peer-checked:border-blue-500 peer-checked:bg-blue-50 peer-checked:text-blue-600">
+                                <i class="fa-solid fa-user-shield text-sm mb-1 block"></i>
+                                <span class="text-xs font-medium">Giám sát</span>
+                            </div>
+                        </label>
+                        <label class="cursor-pointer group">
+                            <input type="radio" name="role-select" value="resident" onchange="toggleAuthFields()" class="peer sr-only">
+                            <div class="p-2.5 border border-slate-200 bg-slate-50 rounded-xl text-center transition-all peer-checked:border-blue-500 peer-checked:bg-blue-50 peer-checked:text-blue-600">
+                                <i class="fa-solid fa-house-user text-sm mb-1 block"></i>
+                                <span class="text-xs font-medium">Cư dân</span>
                             </div>
                         </label>
                     </div>
                 </div>
 
-                <div class="h-px bg-slate-100"></div>
-
-                <div id="field-container">
-                    <div id="field-staff" class="space-y-1">
-                        <label class="block text-xs font-medium text-slate-600 mb-1">Chọn Đúng Tên Của Bạn Để Vào Ca:</label>
-                        <select id="select-staff-user" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium text-slate-700"></select>
-                    </div>
-                    
-                    <div id="field-admin" class="space-y-1 hidden">
-                        <label class="block text-xs font-medium text-slate-600 mb-1">Mã định danh Giám sát (Tên/Email):</label>
-                        <div class="relative">
-                            <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400 text-sm"><i class="fa-solid fa-user-check"></i></span>
-                            <input type="text" id="input-email-admin" placeholder="Nhập tên đăng nhập hoặc email giám sát" class="w-full border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        </div>
+                <div id="field-container" class="pt-2">
+                    <div id="field-input-wrapper">
+                        <label id="input-label" class="block text-xs font-medium text-slate-600 mb-1">Mã số nhân viên</label>
+                        <input type="text" id="auth-main-input" placeholder="Nhập mã nhân viên (Ví dụ: 1101, NV01)" class="w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
                     </div>
                 </div>
 
                 <button onclick="handleLogin()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-xl shadow-md transition-all flex justify-center items-center gap-2 text-sm">
-                    <i class="fa-solid fa-right-to-bracket"></i> Xác nhận vào hệ thống
+                    <i class="fa-solid fa-right-to-bracket"></i> Xác thực thông tin truy cập
                 </button>
             </div>
         </div>
 
         <div id="main-panel" class="hidden space-y-6">
             
-            <div class="bg-white rounded-2xl p-4 sm:p-6 border border-slate-100 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div class="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div class="flex items-center gap-4">
-                    <div class="p-3.5 bg-blue-600 text-white rounded-xl shadow-md shadow-blue-500/20"><i id="panel-avatar" class="fa-solid text-xl"></i></div>
+                    <div class="p-3.5 bg-blue-600 text-white rounded-xl shadow-md"><i id="panel-avatar" class="fa-solid text-xl"></i></div>
                     <div>
                         <div class="text-xs font-bold text-blue-600 uppercase tracking-wider" id="panel-role-badge">VAI TRÒ</div>
-                        <h2 class="text-xl font-bold mt-0.5 text-slate-900" id="panel-username-display">Họ Tên Tài Khoản</h2>
+                        <h2 class="text-xl font-bold mt-0.5 text-slate-900" id="panel-username-display">Họ Tên</h2>
                         <p class="text-xs text-slate-500 mt-0.5"><i class="fa-solid fa-city mr-1"></i> Dự án vận hành: <span class="font-semibold text-slate-700" id="panel-project-display">Tên dự án</span></p>
                     </div>
                 </div>
-                <button onclick="handleLogout()" class="w-full md:w-auto bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold px-5 py-2.5 rounded-xl text-xs transition-colors flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-right-from-bracket"></i> Thoát / Đổi ca trực
+                <button onclick="handleLogout()" class="w-full md:w-auto bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold px-5 py-2.5 rounded-xl text-xs flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-right-from-bracket"></i> Thoát hệ thống
                 </button>
             </div>
 
             <div id="panel-admin" class="hidden space-y-6">
                 <div class="border-b border-slate-200 flex gap-6 overflow-x-auto hide-scrollbar">
                     <button onclick="switchTab('admin', 'monitor')" id="tab-admin-monitor" class="py-3 border-b-2 border-transparent text-sm font-medium text-slate-500 hover:text-slate-800 transition-all whitespace-nowrap tab-active"><i class="fa-solid fa-tower-broadcast mr-1.5"></i>Theo dõi trực tuyến</button>
-                    <button onclick="switchTab('admin', 'staff-management')" id="tab-admin-staff-management" class="py-3 border-b-2 border-transparent text-sm font-medium text-slate-500 hover:text-slate-800 transition-all whitespace-nowrap"><i class="fa-solid fa-users-gear mr-1.5"></i>Quản lý nhân sự dự án</button>
+                    <button onclick="switchTab('admin', 'assign')" id="tab-admin-assign" class="py-3 border-b-2 border-transparent text-sm font-medium text-slate-500 hover:text-slate-800 transition-all whitespace-nowrap"><i class="fa-solid fa-user-plus mr-1.5"></i>Giao phân công việc</button>
+                    <button onclick="switchTab('admin', 'staff-management')" id="tab-admin-staff-management" class="py-3 border-b-2 border-transparent text-sm font-medium text-slate-500 hover:text-slate-800 transition-all whitespace-nowrap"><i class="fa-solid fa-users-gear mr-1.5"></i>Quản lý nhân sự</button>
                 </div>
 
-                <div id="content-admin-monitor" class="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm space-y-4">
-                    <h3 class="text-sm font-bold uppercase tracking-wider text-slate-400"><i class="fa-solid fa-wifi text-blue-500 mr-1.5"></i>Bảng tiến độ công việc trực tuyến</h3>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left text-xs border-collapse">
-                            <thead>
-                                <tr class="border-b border-slate-200 bg-slate-50 text-slate-500 font-semibold uppercase tracking-wider">
-                                    <th class="p-3">Nhân viên</th>
-                                    <th class="p-3">Vị trí thực hiện</th>
-                                    <th class="p-3">Trạng thái hạng mục</th>
-                                </tr>
-                            </thead>
-                            <tbody id="table-admin-monitor-rows" class="divide-y divide-slate-100 text-slate-600">
-                                <tr><td colspan="3" class="p-3 text-center text-slate-400">Không có hoạt động nào phát sinh trong ca</td></tr>
-                            </tbody>
-                        </table>
+                <div id="content-admin-monitor" class="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm">
+                    <p class="text-xs text-slate-400 italic">Bảng theo dõi trực tuyến tiến độ...</p>
+                </div>
+
+                <div id="content-admin-assign" class="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm max-w-xl hidden space-y-4">
+                    <h3 class="text-sm font-bold uppercase tracking-wider text-slate-400"><i class="fa-solid fa-paste text-blue-500 mr-1.5"></i>Lập lệnh phân công điều hành</h3>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Chọn Khu vực chuẩn:</label>
+                        <select id="adm-area-select" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none"></select>
                     </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Nhân viên thực hiện:</label>
+                        <input type="text" placeholder="Nhập tên nhân viên" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none">
+                    </div>
+                    <button class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 rounded-xl text-xs shadow-md"><i class="fa-solid fa-paper-plane mr-1"></i> Phát lệnh ngay</button>
                 </div>
 
                 <div id="content-admin-staff-management" class="grid grid-cols-1 lg:grid-cols-12 gap-6 hidden">
                     <div class="lg:col-span-4 bg-white rounded-2xl p-5 border border-slate-100 shadow-sm space-y-4 h-fit">
                         <div class="text-slate-900 font-bold text-xs uppercase tracking-wider border-b border-slate-100 pb-2 flex items-center gap-1.5">
-                            <i class="fa-solid fa-user-plus text-blue-500"></i> Thêm nhân sự mới
+                            <i class="fa-solid fa-user-plus text-blue-500"></i> Thêm nhân viên vào dự án
                         </div>
                         <div>
                             <label class="block text-[11px] font-semibold text-slate-500 mb-1">Mã nhân viên (MaNV):</label>
-                            <input type="text" id="adm-input-manv" placeholder="Ví dụ: NV01, 1025" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium">
+                            <input type="text" id="adm-new-manv" placeholder="Ví dụ: 1104, NV05" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium">
                         </div>
                         <div>
                             <label class="block text-[11px] font-semibold text-slate-500 mb-1">Họ và tên nhân viên:</label>
-                            <input type="text" id="adm-input-hoten" placeholder="Nhập đầy đủ họ tên" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium">
+                            <input type="text" id="adm-new-hoten" placeholder="Nhập họ và tên" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium">
                         </div>
-                        <button onclick="apiAddStaffToProject()" id="btn-add-staff" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2.5 rounded-xl text-xs shadow-md flex items-center justify-center gap-2 transition-all">
-                            <i class="fa-solid fa-cloud-arrow-up"></i> Cập nhật lên Google Sheets
+                        <button onclick="apiAddStaff()" id="btn-add-staff" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2.5 rounded-xl text-xs shadow-md flex items-center justify-center gap-2 transition-all">
+                            <i class="fa-solid fa-cloud-arrow-up"></i> Lưu lên Google Sheets
                         </button>
                     </div>
 
                     <div class="lg:col-span-8 bg-white rounded-2xl p-5 border border-slate-100 shadow-sm space-y-3">
                         <div class="text-slate-400 text-xs font-bold uppercase tracking-wider">
-                            <i class="fa-solid fa-address-book text-slate-500 mr-1.5"></i>Nhân viên đang thuộc dự án này
+                            <i class="fa-solid fa-address-book text-slate-500 mr-1.5"></i>Danh sách nhân sự thuộc dự án hiện tại
                         </div>
                         <div class="overflow-x-auto">
                             <table class="w-full text-left text-xs border-collapse">
                                 <thead>
                                     <tr class="border-b border-slate-200 bg-slate-50 text-slate-500 font-semibold">
-                                        <th class="p-3">Mã số (ID)</th>
+                                        <th class="p-3">Mã số NV</th>
                                         <th class="p-3">Họ Tên Nhân Viên</th>
                                         <th class="p-3 text-center">Hành động</th>
                                     </tr>
@@ -161,122 +161,115 @@
                 </div>
             </div>
 
-            <div id="panel-staff" class="hidden space-y-6">
-                <div class="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm space-y-4">
-                    <h3 class="text-sm font-bold uppercase tracking-wider text-slate-400"><i class="fa-solid fa-map-pin text-blue-500 mr-1.5"></i>Khu vực và vị trí ca trực</h3>
-                    <div class="max-w-md">
-                        <label class="block text-xs font-medium text-slate-600 mb-1">Chọn Vị trí bạn đang dọn dẹp/làm việc:</label>
-                        <select id="staff-area-select" onchange="renderStaffRegularJobs()" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-3 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium text-slate-700"></select>
-                    </div>
-                    <div class="h-px bg-slate-100 my-4"></div>
-                    <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Hạng mục cần kiểm tra thực hiện:</h4>
-                    <div id="staff-regular-jobs-list" class="space-y-3"></div>
-                </div>
+            <div id="panel-staff" class="hidden bg-white rounded-2xl p-6 border border-slate-100 shadow-sm">
+                <p class="text-sm">Giao diện làm việc dành cho nhân viên...</p>
+            </div>
+            <div id="panel-resident" class="hidden bg-white rounded-2xl p-6 border border-slate-100 shadow-sm">
+                <p class="text-sm">Giao diện dành cho Cư dân...</p>
             </div>
 
         </div>
     </div>
 
     <script>
-        // DÁN ĐƯỜNG LINK TRIỂN KHAI WEB APP CỦA BẠN VÀO ĐÂY
-        const GLOBAL_GAS_URL = "https://script.google.com/macros/s/AKfycbydZpQEtLxGGjjwZlWPwV6a96MqXPEntgEnbj3rT1p1uRmVsZzx5k2ch4vggzS2HZ_g/exec";
+        // Thay link Web App Apps Script của bạn vào đây
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbwW62wF_Z-Gco7jD3bYmXb9GomXWdC3mD0T7b20S6rD7644yS5Xy0f9RWhIscT4gR-h/exec";
 
-        let SESSION = { user: null, role: null, project: null, id: null };
+        let SESSION = { user: null, role: null, project: null };
         let DB = { nv: [], project_tree: {} };
 
         window.onload = function() {
             setInterval(updateTimeDisplay, 1000);
             updateTimeDisplay();
+            toggleAuthFields();
             fetchMasterData();
         };
 
         function updateTimeDisplay() {
             const options = { timeZone: "Asia/Ho_Chi_Minh", hour: '2-digit', minute: '2-digit', second: '2-digit', year: 'numeric', month: '2-digit', day: '2-digit' };
-            const formatter = new Intl.DateTimeFormat('vi-VN', options);
-            document.getElementById("current-time-display").innerText = "Thời gian thực: " + formatter.format(new Date());
+            document.getElementById("current-time-display").innerText = "Hệ thống: " + new Intl.DateTimeFormat('vi-VN', options).format(new Date());
         }
 
-        // Tải cấu trúc dữ liệu từ Google Sheets
+        // Tải dữ liệu gốc từ Google Sheets về Web
         function fetchMasterData() {
-            if (!GLOBAL_GAS_URL || GLOBAL_GAS_URL.includes("MÃ_WEB_APP")) return;
-            
-            fetch(`${GLOBAL_GAS_URL}?action=getInitData`)
+            if (!GAS_URL) return;
+            fetch(`${GAS_URL}?action=getInitData`)
                 .then(r => r.json())
                 .then(res => {
                     if (res.status === "success") {
                         DB = res.data;
                         buildProjectSelectOptions();
                         if (SESSION.role) refreshPanelViews();
+                    } else {
+                        alert("Lỗi nạp cơ sở dữ liệu: " + res.message);
                     }
                 })
-                .catch(err => console.error("Lỗi đồng bộ dữ liệu gốc:", err));
+                .catch(err => console.error("Lỗi kết nối API Google Sheets:", err));
         }
 
         function buildProjectSelectOptions() {
             const select = document.getElementById("login-project");
-            const currentSelected = select.value;
             select.innerHTML = "";
             const projects = Object.keys(DB.project_tree || {});
             
+            if (projects.length === 0) {
+                select.innerHTML = `<option value="">-- Không có dữ liệu dự án --</option>`;
+                return;
+            }
             projects.forEach(p => {
                 select.innerHTML += `<option value="${p}">${p}</option>`;
             });
-            if(currentSelected && projects.includes(currentSelected)) {
-                select.value = currentSelected;
-            }
-            handleProjectChange();
-        }
-
-        // Tự động cập nhật danh sách nhân viên khi đổi ô Dự án ở màn hình đăng nhập
-        function handleProjectChange() {
-            const project = document.getElementById("login-project").value;
-            const staffSelect = document.getElementById("select-staff-user");
-            staffSelect.innerHTML = "";
-            
-            const filteredStaff = (DB.nv || []).filter(x => x.DuAn === project);
-            if(filteredStaff.length === 0) {
-                staffSelect.innerHTML = `<option value="">-- Dự án chưa được cấp nhân sự --</option>`;
-            } else {
-                filteredStaff.forEach(s => {
-                    staffSelect.innerHTML += `<option value="${s.MaNV}">${s.HoTen} (${s.MaNV})</option>`;
-                });
-            }
-            toggleAuthFields();
         }
 
         function toggleAuthFields() {
             const role = document.querySelector('input[name="role-select"]:checked').value;
-            document.getElementById("field-staff").classList.add("hidden");
-            document.getElementById("field-admin").classList.add("hidden");
+            const label = document.getElementById("input-label");
+            const input = document.getElementById("auth-main-input");
 
-            if (role === 'staff') document.getElementById("field-staff").classList.remove("hidden");
-            if (role === 'admin') document.getElementById("field-admin").classList.remove("hidden");
+            if (role === 'staff') {
+                label.innerText = "Mã số nhân viên:";
+                input.placeholder = "Nhập mã nhân viên (Ví dụ: 1101, NV01)";
+            } else if (role === 'admin') {
+                label.innerText = "Email Giám sát xác thực:";
+                input.placeholder = "Nhập tài khoản email giám sát (Ví dụ: lathanhcu@gmail.com)";
+            } else {
+                label.innerText = "Số phòng khách hàng:";
+                input.placeholder = "Nhập số căn hộ/phòng của cư dân";
+            }
         }
 
         function handleLogin() {
             const project = document.getElementById("login-project").value;
             const role = document.querySelector('input[name="role-select"]:checked').value;
-            
-            if(!project) {
-                alert("Hệ thống chưa có dữ liệu dự án!");
+            const inputValue = document.getElementById("auth-main-input").value.trim().toLowerCase();
+
+            if (!project) {
+                alert("Vui lòng chọn một dự án làm việc!");
+                return;
+            }
+            if (!inputValue) {
+                alert("Vui lòng không để trống trường nhập dữ liệu!");
                 return;
             }
 
+            // Xử lý xác thực đăng nhập từ Client dữ liệu Sheets mang về
             if (role === 'staff') {
-                const staffId = document.getElementById("select-staff-user").value;
-                if(!staffId) {
-                    alert("Dự án chưa có danh sách nhân sự. Hãy báo Giám sát cập nhật trước!");
+                const nv = DB.nv.find(x => x.MaNV.toString().toLowerCase() === inputValue && x.DuAn === project);
+                if (!nv) {
+                    alert("Mã nhân viên không tồn tại hoặc không thuộc dự án này!");
                     return;
                 }
-                const nhanVien = DB.nv.find(x => x.MaNV.toString() === staffId && x.DuAn === project);
-                SESSION = { user: nhanVien.HoTen, role: 'staff', project: project, id: staffId };
+                SESSION = { user: nv.HoTen, role: 'staff', project: project };
+            } else if (role === 'admin') {
+                // Đối soát dữ liệu dựa trên email giám sát cấu trúc trong file ảnh của bạn
+                const matchAdmin = DB.nv.find(x => x.EmailGiamSat && x.EmailGiamSat.toString().toLowerCase() === inputValue && x.DuAn === project);
+                if (!matchAdmin) {
+                    alert("Tài khoản email giám sát này không quản lý dự án đã chọn!");
+                    return;
+                }
+                SESSION = { user: matchAdmin.EmailGiamSat.split('@')[0].toUpperCase(), role: 'admin', project: project };
             } else {
-                const adminCode = document.getElementById("input-email-admin").value.trim();
-                if(!adminCode) {
-                    alert("Vui lòng điền mã định danh Giám sát!");
-                    return;
-                }
-                SESSION = { user: adminCode.toUpperCase(), role: 'admin', project: project, id: null };
+                SESSION = { user: "Cư Dân - " + inputValue.toUpperCase(), role: 'resident', project: project };
             }
 
             document.getElementById("auth-screen").classList.add("hidden");
@@ -293,30 +286,34 @@
             
             document.getElementById("panel-staff").classList.add("hidden");
             document.getElementById("panel-admin").classList.add("hidden");
+            document.getElementById("panel-resident").classList.add("hidden");
 
             if (SESSION.role === 'staff') {
                 badge.innerText = "NHÂN VIÊN CA TRỰC";
                 avatar.className = "fa-solid fa-id-card-clip text-xl";
                 document.getElementById("panel-staff").classList.remove("hidden");
-                setupStaffAreaSelect();
-            } else {
+            } else if (SESSION.role === 'admin') {
                 badge.innerText = "GIÁM SÁT TRƯỞNG DỰ ÁN";
                 avatar.className = "fa-solid fa-user-shield text-xl";
                 document.getElementById("panel-admin").classList.remove("hidden");
                 renderStaffListInAdminPanel();
+                setupAdminAreaSelect();
+            } else {
+                badge.innerText = "CƯ DÂN ĐĂNG NHẬP";
+                avatar.className = "fa-solid fa-house-user text-xl";
+                document.getElementById("panel-resident").classList.remove("hidden");
             }
         }
 
-        // Render danh sách nhân viên tại tab quản lý của giám sát
+        // --- CÁC HÀM QUẢN LÝ NHÂN SỰ DÀNH CHO GIÁM SÁT ---
         function renderStaffListInAdminPanel() {
             const tbody = document.getElementById("adm-table-staff-rows");
             if (!tbody) return;
             tbody.innerHTML = "";
             
-            const projectStaff = (DB.nv || []).filter(x => x.DuAn === SESSION.project);
-            
+            const projectStaff = (DB.nv || []).filter(x => x.DuAn === SESSION.project && x.MaNV);
             if (projectStaff.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="3" class="p-3 text-center text-slate-400 text-xs italic">Dự án chưa có nhân sự. Hãy nhập thông tin bên cạnh.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="3" class="p-3 text-center text-slate-400 text-xs italic">Dự án chưa có nhân viên nào. Hãy nhập form bên cạnh.</td></tr>`;
                 return;
             }
             
@@ -326,27 +323,26 @@
                         <td class="p-3 font-bold text-slate-700">${s.MaNV}</td>
                         <td class="p-3 font-medium text-slate-900">${s.HoTen}</td>
                         <td class="p-3 text-center">
-                            <button onclick="apiDeleteStaff('${s.MaNV}')" class="text-rose-600 hover:text-rose-900 font-semibold text-xs"><i class="fa-solid fa-trash-can"></i> Xóa</button>
+                            <button onclick="apiDeleteStaff('${s.MaNV}')" class="text-rose-600 hover:text-rose-900 font-semibold text-xs"><i class="fa-solid fa-trash-can"></i> Xóa khỏi dự án</button>
                         </td>
                     </tr>`;
             });
         }
 
-        // Giám sát thêm mới nhân sự (POST dữ liệu lên Sheets)
-        function apiAddStaffToProject() {
-            const maNV = document.getElementById("adm-input-manv").value.trim();
-            const hoTen = document.getElementById("adm-input-hoten").value.trim();
+        function apiAddStaff() {
+            const maNV = document.getElementById("adm-new-manv").value.trim();
+            const hoTen = document.getElementById("adm-new-hoten").value.trim();
             const btn = document.getElementById("btn-add-staff");
             
             if (!maNV || !hoTen) {
-                alert("Vui lòng điền đủ Mã số và Họ tên nhân viên!");
+                alert("Vui lòng điền đủ Mã số và Họ tên!");
                 return;
             }
             
             btn.disabled = true;
-            btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Đang ghi lên Sheets...`;
+            btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Đang đồng bộ...`;
             
-            fetch(GLOBAL_GAS_URL, {
+            fetch(GAS_URL, {
                 method: "POST",
                 mode: "no-cors",
                 headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -358,23 +354,22 @@
                 })
             })
             .then(() => {
-                alert(`Đã cập nhật thành công nhân viên [${hoTen}] lên Google Sheets!`);
-                document.getElementById("adm-input-manv").value = "";
-                document.getElementById("adm-input-hoten").value = "";
+                alert(`Đã thêm thành công nhân viên [${hoTen}] lên Google Sheets!`);
+                document.getElementById("adm-new-manv").value = "";
+                document.getElementById("adm-new-hoten").value = "";
                 setTimeout(fetchMasterData, 1200); 
             })
-            .catch(err => alert("Lỗi mạng không thể đồng bộ: " + err))
+            .catch(err => alert("Lỗi kết nối mạng: " + err))
             .finally(() => {
                 btn.disabled = false;
-                btn.innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i> Cập nhật lên Google Sheets`;
+                btn.innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i> Lưu lên Google Sheets`;
             });
         }
 
-        // Giám sát xóa nhân sự khỏi dự án
         function apiDeleteStaff(staffId) {
-            if (!confirm(`Xóa nhân viên có mã số [${staffId}] khỏi dự án hiện tại?`)) return;
+            if (!confirm(`Bạn chắc chắn muốn xóa nhân viên mang mã số [${staffId}] khỏi dự án này?`)) return;
             
-            fetch(GLOBAL_GAS_URL, {
+            fetch(GAS_URL, {
                 method: "POST",
                 mode: "no-cors",
                 headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -385,35 +380,19 @@
                 })
             })
             .then(() => {
-                alert("Đã gửi lệnh xóa dữ liệu lên Google Sheets.");
+                alert("Đã xóa nhân viên trên Google Sheets.");
                 setTimeout(fetchMasterData, 1200);
             })
-            .catch(err => alert("Lỗi kết nối xóa dữ liệu: " + err));
+            .catch(err => alert("Lỗi xóa: " + err));
         }
 
-        function setupStaffAreaSelect() {
-            const select = document.getElementById("staff-area-select");
+        function setupAdminAreaSelect() {
+            const select = document.getElementById("adm-area-select");
+            if(!select) return;
             select.innerHTML = "";
             const tree = DB.project_tree[SESSION.project] || {};
             Object.keys(tree).forEach(area => {
                 select.innerHTML += `<option value="${area}">${area}</option>`;
-            });
-            renderStaffRegularJobs();
-        }
-
-        function renderStaffRegularJobs() {
-            const area = document.getElementById("staff-area-select").value;
-            const container = document.getElementById("staff-regular-jobs-list");
-            container.innerHTML = "";
-            if(!area) return;
-
-            const jobs = DB.project_tree[SESSION.project][area] || [];
-            jobs.forEach((job, idx) => {
-                container.innerHTML += `
-                    <div class="flex justify-between items-center bg-slate-50 p-3 rounded-xl border border-slate-100">
-                        <span class="text-xs font-medium text-slate-700">${idx + 1}. ${job}</span>
-                        <button class="bg-emerald-500 hover:bg-emerald-600 text-white px-2.5 py-1 rounded-lg text-[10px] font-bold transition-colors">Báo cáo hoàn thành</button>
-                    </div>`;
             });
         }
 
@@ -429,10 +408,10 @@
         }
 
         function handleLogout() {
-            SESSION = { user: null, role: null, project: null, id: null };
+            SESSION = { user: null, role: null, project: null };
             document.getElementById("main-panel").classList.add("hidden");
             document.getElementById("auth-screen").classList.remove("hidden");
-            handleProjectChange();
+            document.getElementById("auth-main-input").value = "";
         }
     </script>
 </body>
