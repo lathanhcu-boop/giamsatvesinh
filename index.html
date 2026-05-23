@@ -388,24 +388,30 @@
             fetchMasterData();
         }
 
-        function fetchMasterData() {
-            if (!GAS_URL) return;
-            fetch(`${GAS_URL}?action=getInitData`)
-                .then(r => r.json())
-                .then(res => {
-                    if (res.status === "success") {
-                        DB = res.data;
-                        buildProjectSelectOptions();
-                        if(SESSION.role) refreshPanelViews();
-                    } else {
-                        alert("Lỗi nạp cơ sở dữ liệu: " + res.message);
-                    }
-                })
-                .catch(err => {
-                    console.error(err);
-                    alert("Kết nối API thất bại. Vui lòng kiểm tra quyền cài đặt Web App (Anyone).");
-                    document.getElementById("setup-banner").classList.remove("hidden");
-                });
+       function fetchMasterData() {
+         // Thay thế URL Web App mới của bạn trực tiếp vào đây
+         const GAS_URL = "https://script.google.com/macros/s/MÃ_WEB_APP_MỚI_CỦA_BẠN/exec";
+  
+         if (!GAS_URL || GAS_URL.includes("MÃ_WEB_APP")) {
+           console.error("Chưa cấu hình đúng GAS_URL chính thức.");
+           return;
+         }
+
+         // Sửa cấu trúc gọi fetch chuẩn hóa không còn lỗi dấu ngoặc đơn
+         fetch(`${GAS_URL}?action=getInitData`)
+           .then(r => r.json())
+           .then(res => {
+             if (res.status === "success") {
+               DB = res.data;
+               buildProjectSelectOptions();
+               if (SESSION.role) refreshPanelViews();
+             } else {
+               alert("Lỗi nạp cơ sở dữ liệu: " + res.message);
+             }
+           })
+           .catch(err => {
+             console.error("Lỗi kết nối mạng API:", err);
+           });
         }
 
         function buildProjectSelectOptions() {
